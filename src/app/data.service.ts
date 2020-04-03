@@ -14,7 +14,7 @@ export class DataService {
 	}
 
 	getAllOrders(callback) {
-		const list = [new Order("Jay", 500), new Order("Viru", 1500)];
+		const list = [new Order("Jay", 9876543210, "description1"), new Order("Viru", 9876543211, "description2")];
 		callback(list);
 	}
 }
