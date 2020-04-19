@@ -1,22 +1,27 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { OrderFormComponent } from './order-form/order-form.component';
-import { OrderListComponent } from './order-list/order-list.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
 
 const routes: Routes = [
-    {
-        path:'order-form',
-        component: OrderFormComponent
-    },
-    {
-        path:'order-list',
-        component: OrderListComponent
-    },
-    {
-        path: '',
-        redirectTo: '',
-        pathMatch: 'full'
-    }     
+	{
+		path: 'login',
+		component: LoginComponent
+	},
+	{
+		path: 'logout',
+		component: LogoutComponent
+	},
+	{
+		path: 'dashboard',
+		component: DashboardComponent
+	},
+	{
+		path: '',
+		redirectTo: 'dashboard',
+		pathMatch: 'full'
+	}
 ];
 
 

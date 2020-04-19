@@ -1,0 +1,29 @@
+<div class="container" novalidate>
+  <header color="primary">
+	<h2>Please login to proceed</h2>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="uname">
+      <!-- <mat-error *ngIf="!name.valid && name.touched">
+        {{ titleAlert }}
+      </mat-error> -->
+    </mat-form-field>
+    <br>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input type="password" matInput formControlName="pwd">
+      <!-- <mat-error *ngIf="!name.valid && name.touched">
+        {{ titleAlert }}
+      </mat-error> -->
+    </mat-form-field>
+	<br>
+    <div>
+      <button mat-raised-button color="primary" type="submit" class="button" [disabled]="!form.valid">Login</button>
+    </div>
+
+  </form>
+</div>

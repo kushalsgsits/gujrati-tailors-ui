@@ -1,5 +1,44 @@
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 body {
-    font-family: Roboto, Arial, sans-serif;
+	font-family: Roboto, Arial, sans-serif;
+}
+
+div.mat-form-field-infix {
+	width: 180px;
+}
+
+.item-form-field .mat-form-field-infix {
+	width: 140px;
+}
+
+.date-form-field .mat-form-field-infix {
+	width: 140px;
+}
+
+mat-form-field.item-form-field {
+	margin-left: 40px
+}
+
+.fill-remaining-space {
+	/* This fills the remaining space, by using flexbox. Every toolbar row uses a flexbox row layout. */
+	flex: 1 1 auto;
+}
+
+.space-5px {
+	padding: 5px;
+}
+
+.radio-group-form-field {
+	margin-left: 12px;
+}
+
+.radio-group {
+	display: flex;
+	flex-direction: row;
+	margin: 15px 0;
+}
+
+.radio-button {
+	margin: 5px;
 }

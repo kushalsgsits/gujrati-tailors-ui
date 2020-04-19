@@ -1,0 +1,62 @@
+{
+	"title": "Orders",
+	"entity": "order",
+	"api": {
+		"url": "http://localhost:8080/webapi/orders"
+	},
+	"filter": [
+		"orderType",
+		"orderNumber",
+		"mobile",
+		"name"
+	],
+	"fields": [
+		{
+			"name": "id",
+			"label": "Id",
+			"isId": true,
+			"readonly": true,
+			"type": "number"
+		},
+		{
+			"name": "orderDate",
+			"type": "Date",
+			"label": "Order Date"
+		},
+		{
+			"name": "deliveryDate",
+			"type": "Date",
+			"label": "Delivery Date"
+		},
+		{
+			"name": "orderType",
+			"type": "OrderType",
+			"label": "Order Type"
+		},
+		{
+			"name": "orderNumber",
+			"type": "number",
+			"label": "Order Number"
+		},
+		{
+			"name": "name",
+			"type": "string",
+			"label": "Name"
+		},
+		{
+			"name": "mobile",
+			"type": "number",
+			"label": "Mobile"
+		},
+		{
+			"name": "itemNames",
+			"type": "string[]",
+			"label": "Items"
+		},
+		{
+			"name": "itemCounts",
+			"type": "number[]",
+			"label": "Item Counts"
+		}
+	]
+}
