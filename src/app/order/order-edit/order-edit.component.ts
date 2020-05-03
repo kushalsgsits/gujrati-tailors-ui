@@ -6,7 +6,7 @@ import { OrderService } from '../order.service';
 import { Order, selectItemGroups, SelectItemGroup } from '../order';
 import { map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { MatRadioChange } from '@angular/material/radio';
+import { MatSelectChange } from '@angular/material/select';
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -28,7 +28,7 @@ export const MY_FORMATS = {
 		dateInput: 'LL',
 	},
 	display: {
-		dateInput: 'LL',
+		dateInput: 'DD-MMM-YYYY',
 		monthYearLabel: 'MMM YYYY',
 		dateA11yLabel: 'LL',
 		monthYearA11yLabel: 'MMMM YYYY',
@@ -38,6 +38,7 @@ export const MY_FORMATS = {
 @Component({
 	selector: 'app-order-edit',
 	templateUrl: './order-edit.component.html',
+	styleUrls: ['./order-edit.component.css'],
 	providers: [
 		// `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
 		// application's root module. We provide it at the component level here, due to limitations of
@@ -128,7 +129,7 @@ export class OrderEditComponent implements OnInit {
 		return this.orderForm.get('itemCounts') as FormArray;
 	}
 
-	onItemSelectionChange(event) {
+	onItemSelectionChange(event: MatSelectChange) {
 		const items: string[] = event.value;
 		console.log('Selected item names: ' + items);
 		if (items.length > this.selectedItemsOld.length) {
@@ -145,7 +146,7 @@ export class OrderEditComponent implements OnInit {
 		this.selectedItemsOld = items;
 	}
 
-	onOrderTypeChange(event: MatRadioChange) {
+	onOrderTypeChange(event: MatSelectChange) {
 		const orderType: string = event.value;
 		const isOrderTypeRegular = 'Regular' === orderType;
 		console.log('isOrderTypeRegular:' + isOrderTypeRegular);
@@ -162,14 +163,17 @@ export class OrderEditComponent implements OnInit {
 		this.orderService.save(this.orderForm.value).subscribe(
 			order => {
 				console.log('Order was saved successfully! ID=' + order.id);
-				this.initOrderForm(order);
-				this.feedback = { type: 'success', message: 'Order was saved successfully!' };
-				setTimeout(() => {
+				this.router.navigate(['/orders']);
+				// this.initOrderForm(order);
+				// this.feedback = { type: 'success', message: 'Order was saved successfully!' };
+				/*setTimeout(() => {
 					this.router.navigate(['/orders']);
-				}, 1000);
+				}, 1000);*/
 			},
-			err => {
-				this.feedback = { type: 'warning', message: 'Error saving order' };
+			errResponse => {
+				// this.feedback = { type: 'warning', message: 'Error saving order' };
+				alert('Error saving order. ' + errResponse.error.shortErrorMsg);
+				console.log('Error saving order. ' + errResponse.error.longErrorMsg)
 			}
 		);
 	}
@@ -177,7 +181,7 @@ export class OrderEditComponent implements OnInit {
 	onCancel() {
 		this.router.navigate(['/orders']);
 	}
-	
+
 	get isEditing(): boolean {
 		return this.orderForm.get('id').value != null;
 	}

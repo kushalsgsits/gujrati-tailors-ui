@@ -1,77 +1,127 @@
-<div class="card">
-	<div class="header">
-		<h2 class="title">Orders List</h2>
-	</div>
-	<div class="content">
-		<form #f="ngForm">
-
-			<div class="form-group">
-				<label for="orderType">Order Type:</label> <input
-					[(ngModel)]="filter.orderType" id="orderType" name="orderType"
-					class="form-control">
+<div class="container">
+	
+	<mat-expansion-panel class="headers-align" hideToggle [(expanded)]="isFilterPanelExpanded">
+		<mat-expansion-panel-header color="">
+	    	<mat-panel-title>
+				<button mat-mini-fab color="primary"><mat-icon>filter_list</mat-icon></button>
+			</mat-panel-title>
+	    	<mat-panel-description>
+	    		<span>
+		    		<span *ngIf="filterForm.value.itemCategory"><mat-icon>category</mat-icon>{{filterForm.value.itemCategory}}  </span>
+		    		<span *ngIf="filterForm.value.orderNumber"><mat-icon>label_important</mat-icon>{{filterForm.value.orderNumber}}  </span>
+		    		<span *ngIf="filterForm.value.deliveryStartDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryStartDate | date:'dd-MMM-yyyy'}}  </span>
+		    		<span *ngIf="filterForm.value.deliveryEndDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryEndDate | date:'dd-MMM-yyyy'}}  </span>
+		    		<span *ngIf="filterForm.value.mobile"><mat-icon>phone</mat-icon>{{filterForm.value.mobile}}  </span>
+		    		<span *ngIf="filterForm.value.name"><mat-icon>person_circle</mat-icon>{{filterForm.value.name}}</span>
+	    		</span>
+	    	</mat-panel-description>
+	    </mat-expansion-panel-header>
+	
+		<form [formGroup]="filterForm" (ngSubmit)="onSubmit()" class="filter-form">
+			<div>
+				<mat-form-field appearance="outline">
+					<mat-label>Item Category</mat-label>
+	    			<mat-select formControlName="itemCategory" multiple>
+		      			<mat-option *ngFor="let itemCategory of itemCategoriesArray" [value]="itemCategory" >{{itemCategory}}</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>Order No.</mat-label> 
+					<input matInput formControlName="orderNumber">
+				</mat-form-field>
 			</div>
-
-			<div class="form-group">
-				<label for="orderNumber">Order Number:</label> <input
-					[(ngModel)]="filter.orderNumber" id="orderNumber"
-					name="orderNumber" class="form-control">
+			<div>
+				<mat-form-field appearance="outline" class="date-form-field"> 
+					<mat-label>Delivery From</mat-label>
+					<input matInput formControlName="deliveryStartDate" [matDatepicker]="from">
+					<mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
+				    <mat-datepicker #from></mat-datepicker>
+				</mat-form-field>
+				<mat-form-field appearance="outline" class="date-form-field"> 
+					<mat-label>Delivery To</mat-label>
+					<input matInput [min]="filterForm.value.deliveryStartDate" formControlName="deliveryEndDate" [matDatepicker]="to">
+					<mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
+				    <mat-datepicker #to></mat-datepicker>
+				</mat-form-field>			
 			</div>
-
-			<div class="form-group">
-				<label for="name">Name:</label> <input [(ngModel)]="filter.name"
-					id="name" name="name" class="form-control">
+			<div>
+				<mat-form-field appearance="outline">
+					<mat-label>Mobile</mat-label>
+					<input matInput formControlName="mobile">
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>Name</mat-label>
+					<input matInput formControlName="name">
+				</mat-form-field>
 			</div>
-
-			<div class="form-group">
-				<label for="mobile">Mobile:</label> <input
-					[(ngModel)]="filter.mobile" id="mobile" name="mobile"
-					class="form-control">
+			<div>
+				<button mat-raised-button color="primary" type="submit" class="button" [disabled]="!filterForm.valid">Apply Filters</button>
+				<span class="space-5px"></span>
+				<button mat-raised-button color="secondary" type="button" (click)="onCancel()">Cancel</button>
 			</div>
-
-			<button (click)="search()" [disabled]="!f?.valid"
-				class="btn btn-primary">Search</button>
-			<a [routerLink]="['../orders', 'new' ]" class="btn btn-default">New</a>
 		</form>
-	</div>
-</div>
-<div class="card" *ngIf="orderList.length > 0">
-	<div *ngIf="feedback" class="alert alert-{{feedback.type}}">{{
-		feedback.message }}</div>
-	<div class="table-responsive">
-		<table class="table table-centered table-hover mb-0" id="datatable">
-			<thead>
-				<tr>
-					<th class="border-top-0" scope="col">Id</th>
-					<th class="border-top-0" scope="col">Order Type</th>
-					<th class="border-top-0" scope="col">Order Date</th>
-					<th class="border-top-0" scope="col">Delivery Date</th>
-					<th class="border-top-0" scope="col">Order Number</th>
-					<th class="border-top-0" scope="col">Name</th>
-					<th class="border-top-0" scope="col">Mobile</th>
-					<th class="border-top-0" scope="col">Item Names</th>
-					<th class="border-top-0" scope="col">Item Counts</th>
-					<th class="border-top-0" scope="col" style="width: 120px"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let item of orderList"
-					[class.active]="item === selectedOrder">
+	</mat-expansion-panel>
 
-					<td>{{item.id}}</td>
-					<td>{{item.orderType}}</td>
-					<td>{{item.orderDate}}</td>
-					<td>{{item.deliveryDate}}</td>
-					<td>{{item.orderNumber}}</td>
-					<td>{{item.name}}</td>
-					<td>{{item.mobile}}</td>
-					<td>{{item.itemNames}}</td>
-					<td>{{item.itemCounts}}</td>
-					<td style="white-space: nowrap">
-						<a [routerLink]="['../orders', item.id ]" class="btn btn-secondary">Edit</a>&nbsp;
-						<button (click)="delete(item)" class="btn btn-danger">Delete</button>
-					</td>
-				</tr>
-			</tbody>
+	<div *ngIf="orderList.length > 0">
+		<h3>Orders List</h3>
+		<mat-error *ngIf="feedback" class="alert alert-{{feedback.type}}">{{feedback.message}}</mat-error>
+		<table mat-table [dataSource]="orderList" multiTemplateDataRows class="mat-elevation-z8">
+
+			<ng-container matColumnDef="orderNumber">
+				<th mat-header-cell *matHeaderCellDef>Order No.</th>
+				<td mat-cell *matCellDef="let element">{{element.orderType | slice:0:1 }}-{{element.orderNumber}}</td>					
+			</ng-container>
+			
+			<ng-container matColumnDef="name">
+				<th mat-header-cell *matHeaderCellDef>Name</th>
+				<td mat-cell *matCellDef="let element">{{element.name}}</td>					
+			</ng-container>
+			
+			<ng-container matColumnDef="deliveryDate">
+				<th mat-header-cell *matHeaderCellDef>Del. Date</th>
+				<td mat-cell *matCellDef="let element">{{element.deliveryDate | date:'dd-MMM-yyyy'}}</td>					
+			</ng-container>
+
+			<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+			<ng-container matColumnDef="expandedDetail">
+				<td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+					<div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+						<div class="element-detail-1">
+							<div>
+								<table class="item-table">
+									<tr>
+										<th>Item</th>
+										<th>Qty</th>
+									</tr>
+									<tr *ngFor="let item of element.itemNames; let i=index">
+										<td>{{element.itemNames[i]}}</td>
+										<td>{{element.itemCounts[i]}}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="element-detail-1-2">
+								<div><mat-icon mat-list-icon>phone</mat-icon>{{element.mobile}}</div>
+								<div><mat-icon mat-list-icon>date_range</mat-icon>{{element.orderDate | date:'dd-MMM-yyyy'}}</div>
+							</div>
+						</div>
+						<div *ngIf="element.notes" class="element-detail-2">
+							<span class="element-detail-2-1">Notes: </span>{{element.notes}}</div>
+						<div class="element-detail-3">
+							<button mat-mini-fab (click)="edit(element)" color="primary"><mat-icon>edit</mat-icon></button>
+							<span class="space-5px"></span>
+							<button mat-mini-fab (click)="delete(element)" color="warn"><mat-icon>delete</mat-icon></button>
+						</div>
+					</div>
+				</td>
+			</ng-container>
+
+			<tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+			<tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row" 
+					[class.example-expanded-row]="expandedElement === element"
+					(click)="expandedElement = expandedElement === element ? null : element">
+			</tr>
+			<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 		</table>
 	</div>
+
 </div>

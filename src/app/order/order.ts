@@ -36,26 +36,31 @@ export const selectItemGroups: SelectItemGroup[] = [
 	{
 		name: 'Shirt-Pant',
 		selectItems: [
-			{ value: 'Shirt-Pant', viewValue: 'Shirt-Pant' },
 			{ value: 'Shirt', viewValue: 'Shirt' },
-			{ value: 'Pant', viewValue: 'Pant' }
+			{ value: 'Pant', viewValue: 'Pant' },
+			{ value: 'Jeans', viewValue: 'Jeans' }
 		]
 	},
 	{
 		name: 'Kurta-Payjama',
 		selectItems: [
-			{ value: 'Kurta-Payjama', viewValue: 'Kurta-Payjama' },
 			{ value: 'Kurta', viewValue: 'Kurta' },
 			{ value: 'Payjama', viewValue: 'Payjama' },
 			{ value: 'Pant-Payjama', viewValue: 'Pant-Payjama' },
-			{ value: 'Pathani', viewValue: 'Pathani' }
+			{ value: 'Pathani', viewValue: 'Pathani' },
+			{ value: 'Kurti', viewValue: 'Kurti' }
 		]
 	},
 	{
 		name: 'Miscellanious',
 		selectItems: [
-			{ value: 'Nehru-Jacket', viewValue: 'Nehru-Jacket' },
+			{ value: 'Jacket', viewValue: 'Jacket' },
+			{ value: 'Safari', viewValue: 'Safari' },
 			{ value: 'Others', viewValue: 'Others' },
 		]
 	}
+];
+
+export const itemCategories: string[] = [
+	'Coat', 'Shirt', 'Pant', 'Kurta', 'Payjama', 'Jacket', 'Safari'
 ];

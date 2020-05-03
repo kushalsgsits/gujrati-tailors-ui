@@ -1,23 +1,55 @@
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 body {
-	font-family: Roboto, Arial, sans-serif;
+	font: 400 14px/20px Roboto, Arial, sans-serif;
+	margin: 0.3em;
+}
+
+
+mat-toolbar-row.mat-toolbar-row, .container, mat-expansion-panel-header.mat-expansion-panel-header {
+	padding: 0.3em;
+}
+
+mat-expansion-panel .mat-expansion-panel-body {
+	padding: 0 0.3em 0.3em;
+}
+
+.mat-form-field {
+	margin-right: 0.5em;
+	font: 400 14px/20px Roboto, Arial, sans-serif;
 }
 
 div.mat-form-field-infix {
-	width: 180px;
+	width: 9.2em;
+}
+
+.notes-form-field .mat-form-field-infix {
+	width: 20.35em;
+}
+
+.items-form-field .mat-form-field-infix {
+	width: 20.35em;
+}
+
+.mat-form-field.item-form-field {
+	margin-right: 0;
+	margin-left: 2em;
 }
 
 .item-form-field .mat-form-field-infix {
-	width: 140px;
+	width: 7.39em;
 }
 
 .date-form-field .mat-form-field-infix {
-	width: 140px;
+	width: 6.7em;
 }
 
-mat-form-field.item-form-field {
-	margin-left: 40px
+mat-expansion-panel .date-form-field .mat-form-field-infix {
+	width: 6.7em;
+}
+
+mat-expansion-panel .mat-form-field-infix {
+	width: 9.2em;
 }
 
 .fill-remaining-space {
@@ -26,19 +58,5 @@ mat-form-field.item-form-field {
 }
 
 .space-5px {
-	padding: 5px;
-}
-
-.radio-group-form-field {
-	margin-left: 12px;
-}
-
-.radio-group {
-	display: flex;
-	flex-direction: row;
-	margin: 15px 0;
-}
-
-.radio-button {
-	margin: 5px;
+	padding: 0.3em;
 }

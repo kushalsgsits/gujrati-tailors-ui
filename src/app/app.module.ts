@@ -6,8 +6,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -23,15 +24,14 @@ import { MatSelectModule } from '@angular/material/select';
 import 'hammerjs';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
-import { LogoutComponent } from './logout/logout.component';
 import { OrderModule } from './order/order.module';
+import { AppHttpInterceptor } from './interceptor/app-http.interceptor';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		DashboardComponent,
 		LoginComponent,
-		LogoutComponent
 	],
 	imports: [
 		BrowserModule,
@@ -54,7 +54,9 @@ import { OrderModule } from './order/order.module';
 		MatSelectModule,
 		OrderModule
 	],
-	providers: [],
+	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true }
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

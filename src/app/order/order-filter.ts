@@ -1,5 +1,7 @@
 export class OrderFilter {
-	orderType = '';
+	deliveryStartDate: Date;
+	deliveryEndDate = '';
+	itemCategory: string[] = [];
 	orderNumber = '';
 	name = '';
 	mobile = '';

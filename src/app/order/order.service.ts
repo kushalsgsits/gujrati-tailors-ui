@@ -3,9 +3,7 @@ import { Order } from './order';
 import { OrderFilter } from './order-filter';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-
-const headers = new HttpHeaders().set('Accept', 'application/json');
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class OrderService {
@@ -17,54 +15,52 @@ export class OrderService {
 
 	findById(id: string): Observable<Order> {
 		const url = `${this.api}/${id}`;
-		// const params = { id: id };
-		const params = {};
-		return this.http.get<Order>(url, { params, headers });
+		return this.http.get<Order>(url);
 	}
 
 	load(filter: OrderFilter): void {
-		this.find(filter).subscribe(result => {
-			this.orderList = result;
-		},
+		this.find(filter).subscribe(
+			result => {
+				this.orderList = result;
+			},
 			err => {
-				console.error('error loading', err);
+				this.orderList = [];
+				console.error('Error getting orders: ', err);
+				alert('Error getting orders');
 			}
 		);
 	}
 
 	find(filter: OrderFilter): Observable<Order[]> {
+		let st: string = `${JSON.stringify(null === filter.deliveryStartDate ? "" : filter.deliveryStartDate)}`;
+		let end: string = `${JSON.stringify(null === filter.deliveryEndDate ? "" : filter.deliveryEndDate)}`;
 		const params = {
-			'orderType': filter.orderType,
+			'itemCategory': `${filter.itemCategory}`,
 			'orderNumber': filter.orderNumber,
-			'name': filter.name,
+			'deliveryStartDate': st.substring(1, st.length - 1),
+			'deliveryEndDate': end.substring(1, end.length - 1),
 			'mobile': filter.mobile,
+			'name': filter.name
 		};
-
-		return this.http.get<Order[]>(this.api, { params, headers });
+		return this.http.get<Order[]>(this.api, { params });
 	}
 
-	save(entity: Order): Observable<Order> {
+	save(order: Order): Observable<Order> {
 		let params = new HttpParams();
 		let url = '';
-		if (entity.id) {
-			url = `${this.api}/${entity.id.toString()}`;
-			params = new HttpParams().set('ID', entity.id.toString());
-			return this.http.put<Order>(url, entity, { headers, params });
+		if (order.id) {
+			url = `${this.api}/${order.id.toString()}`;
+			params = new HttpParams().set('ID', order.id.toString());
+			return this.http.put<Order>(url, order, { params });
 		} else {
 			url = `${this.api}`;
-			return this.http.post<Order>(url, entity, { headers, params });
+			return this.http.post<Order>(url, order, { params });
 		}
 	}
 
 	delete(entity: Order): Observable<Order> {
-		let params = new HttpParams();
-		let url = '';
-		if (entity.id) {
-			url = `${this.api}/${entity.id.toString()}`;
-			// params = new HttpParams().set('ID', entity.id.toString());
-			return this.http.delete<Order>(url, { headers, params });
-		}
-		return null;
+		let url = `${this.api}/${entity.id.toString()}`;
+		return this.http.delete<Order>(url);
 	}
 }
 

@@ -5,15 +5,15 @@ import { Router } from '@angular/router';
 	providedIn: 'root'
 })
 export class AuthService {
-	
+
 	storageKey: string = "gujrati-tailors-jwt";
 
 	constructor(private router: Router) { }
-	
+
 	setToken(token: string) {
 		localStorage.setItem(this.storageKey, token);
 	}
-	
+
 	getToken() {
 		return localStorage.getItem(this.storageKey);
 	}

@@ -9,13 +9,13 @@
       <span>Gujrati Tailors </span>
       <div fxShow="true" fxHide.lt-md="true">
         <!-- The following menu items will be hidden on both SM and XS screen sizes -->
-        <a color="secondary" mat-button routerLink="/dashboard">Dashboard</a>
+        <!-- <a color="secondary" mat-button routerLink="/dashboard">Dashboard</a> -->
         <a color="secondary" mat-button routerLink="/orders/new">Create Order</a>
         <a color="secondary" mat-button routerLink="/orders">Orders List</a>
       </div>
       <!-- This fills the remaining space of the current row to push logout icon to the right -->
   	  <span class="fill-remaining-space"></span>
-      <button mat-icon-button routerLink="/logout">
+      <button mat-icon-button (click)="logout()" *ngIf="auth.isLoggedIn()">
         <mat-icon>logout</mat-icon>
       </button>
     </mat-toolbar-row>
@@ -24,7 +24,7 @@
   <mat-sidenav-container fxFlexFill>
     <mat-sidenav #sidenav>
       <mat-nav-list>
-        <a color="secondary" mat-list-item (click)="sidenav.toggle()" routerLink="/dashboard">Dashboard</a>
+        <!-- <a color="secondary" mat-list-item (click)="sidenav.toggle()" routerLink="/dashboard">Dashboard</a> -->
         <a color="secondary" mat-list-item (click)="sidenav.toggle()" routerLink="/orders/new">Create Order</a>
         <a color="secondary" mat-list-item (click)="sidenav.toggle()" routerLink="/orders">Orders List</a>
       </mat-nav-list>

@@ -1,19 +1,24 @@
 <div class="container" novalidate>
 	<header color="primary">
-		<h2>New Order</h2>
+		<h3 *ngIf="!isEditing">Create Order</h3>
+		<h3 *ngIf="isEditing">Update Order</h3>
 	</header>
 	
 	<mat-error *ngIf="feedback" class="alert alert-{{feedback.type}}">{{feedback.message}}</mat-error>
 	
 	<form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
-		<!-- TODO add better styles for radio group -->
-		<div class="mat-form-field radio-group-form-field">
-			<label id="orderType-label">Order Type</label>
-			<!-- TODO disable orderType while editing -->
-			<mat-radio-group aria-labelledby="orderType-label" class="radio-group" formControlName="orderType" (change)="onOrderTypeChange($event)" [disabled]="isEditing"> 
-				<mat-radio-button class="radio-button" value="Coat">Coat</mat-radio-button> 
-				<mat-radio-button class="radio-button" value="Regular">Regular</mat-radio-button> 
-			</mat-radio-group>
+		<div>
+			<mat-form-field appearance="outline">
+				<mat-label>Order Type</mat-label>
+    			<mat-select formControlName="orderType" (selectionChange)="onOrderTypeChange($event)" [disabled]="isEditing">
+	      			<mat-option value="Coat">Coat</mat-option>
+	      			<mat-option value="Regular">Regular</mat-option>
+				</mat-select>
+			</mat-form-field>
+			<mat-form-field appearance="outline">
+				<mat-label>Order Number</mat-label> 
+				<input matInput formControlName="orderNumber">
+			</mat-form-field>
 		</div>
 		<div>
 			<mat-form-field appearance="outline" class="date-form-field"> 
@@ -22,8 +27,6 @@
 				<mat-datepicker-toggle matSuffix [for]="orderDatepicker" [disabled]="isEditing"></mat-datepicker-toggle>
 			    <mat-datepicker #orderDatepicker></mat-datepicker>
 			</mat-form-field>
-		</div>
-		<div>
 			<mat-form-field appearance="outline" class="date-form-field"> 
 				<mat-label>Delivery Date</mat-label>
 				<input matInput [min]="orderForm.value.orderDate" formControlName="deliveryDate" [matDatepicker]="deliveryDatepicker">
@@ -33,24 +36,16 @@
 		</div>
 		<div>
 			<mat-form-field appearance="outline">
-				<mat-label>Order Number</mat-label> 
-				<input matInput formControlName="orderNumber">
-			</mat-form-field>
-		</div>
-		<div>
-			<mat-form-field appearance="outline">
 				<mat-label>Name</mat-label>
 				<input matInput formControlName="name">
 			</mat-form-field>
-		</div>
-		<div>
 			<mat-form-field appearance="outline">
 				<mat-label>Mobile</mat-label>
 				<input matInput formControlName="mobile">
 			</mat-form-field>
 		</div>
 		<div>
-			<mat-form-field appearance="outline">
+			<mat-form-field appearance="outline" class="items-form-field">
 				<mat-label>Items</mat-label>
     			<mat-select formControlName="itemNames" multiple (selectionChange)="onItemSelectionChange($event)">
 					<mat-optgroup *ngFor="let group of selectItemGroupsArray" [label]="group.name" [disabled]="group.disabled">
@@ -60,26 +55,23 @@
 			</mat-form-field>
 		</div>
 		<div formArrayName="itemCounts">
-			<div *ngFor="let item of itemCounts.controls; let i=index">
-				<mat-form-field appearance="outline" class="item-form-field">
-					<mat-label>{{orderForm.value.itemNames[i]}}</mat-label> 
-					<input matInput [formControlName]="i">
-				</mat-form-field>
-			</div>
+			<mat-form-field appearance="outline" class="item-form-field" *ngFor="let item of itemCounts.controls; let i=index">
+				<mat-label>{{orderForm.value.itemNames[i]}}</mat-label> 
+				<input matInput [formControlName]="i">
+			</mat-form-field>
 		</div>
 		<div>
-			<mat-form-field hintLabel="Max 300 characters" appearance="outline">
+			<mat-form-field appearance="outline" class="notes-form-field">
 				<mat-label>Notes</mat-label>
     			<textarea matInput #notesInput maxlength="300" formControlName="notes"></textarea>
     			<mat-hint align="end">{{notesInput.value?.length || 0}}/300</mat-hint>
   			</mat-form-field>
 		</div>
 		<div>
-			<button mat-raised-button color="primary" type="submit" class="button" [disabled]="!orderForm.valid">Submit</button>
+			<button *ngIf="!isEditing" mat-raised-button color="primary" type="submit" class="button" [disabled]="!orderForm.valid">Create Order</button>
+			<button *ngIf="isEditing" mat-raised-button color="primary" type="submit" class="button" [disabled]="!orderForm.valid">Update Order</button>
 			<span class="space-5px"></span>
-			<button mat-raised-button color="secondary" type="button" (click)="onCancel()">Cancel</button>
+			<button mat-raised-button type="button" (click)="onCancel()">Cancel</button>
 		</div>
-		<!-- <p>Order form values: {{ orderForm.value | json }}</p>
-		<p>Order form isValid: {{ orderForm.valid }}</p> -->
 	</form>
 </div>
