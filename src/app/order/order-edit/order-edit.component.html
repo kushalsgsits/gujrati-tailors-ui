@@ -56,7 +56,7 @@
 		</div>
 		<div formArrayName="itemCounts">
 			<mat-form-field appearance="outline" class="item-form-field" *ngFor="let item of itemCounts.controls; let i=index">
-				<mat-label>{{orderForm.value.itemNames[i]}}</mat-label> 
+				<mat-label>{{orderForm.value.itemNames[i]}} Qty</mat-label> 
 				<input matInput [formControlName]="i">
 			</mat-form-field>
 		</div>
