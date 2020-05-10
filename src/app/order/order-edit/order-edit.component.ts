@@ -75,14 +75,13 @@ export class OrderEditComponent implements OnInit {
 	}
 
 	initOrder() {
-
 		this.route.params
 			.pipe(
 				map(p => p.id),
 				switchMap(id => {
 					if (id === 'new') {
 						const emptyOrder = new Order();
-						emptyOrder.orderDate = moment().toISOString();
+						emptyOrder.orderDate = moment();
 						emptyOrder.itemNames = [];
 						return of(emptyOrder);
 					}
@@ -95,13 +94,15 @@ export class OrderEditComponent implements OnInit {
 					this.feedback = {};
 					this.initOrderForm(order);
 				},
-				err => {
-					this.feedback = { type: 'warning', message: 'Error loading order details. Please check internet connection or contact Kushal' };
+				errResponse => {
+					// this.feedback = { type: 'warning', message: 'Error loading order details. Please check internet connection or contact Kushal' };
+					alert(errResponse.shortErrorMsg);
 				}
 			);
 	}
 
 	initOrderForm(order: Order) {
+		this.convertMillisToDate(order);
 		this.orderForm = this.fb.group({
 			id: [order.id],
 			orderType: [order.orderType, Validators.required],
@@ -114,6 +115,8 @@ export class OrderEditComponent implements OnInit {
 			itemCounts: this.fb.array(this.getItemFormArrayFromItemCounts(order.itemCounts)),
 			notes: [order.notes, Validators.maxLength(300)]
 		});
+
+		console.log('Initialized Order form: ', this.orderForm.value);
 	}
 
 	getItemFormArrayFromItemCounts(itemCounts: number[]): FormControl[] {
@@ -131,16 +134,13 @@ export class OrderEditComponent implements OnInit {
 
 	onItemSelectionChange(event: MatSelectChange) {
 		const items: string[] = event.value;
-		console.log('Selected item names: ' + items);
 		if (items.length > this.selectedItemsOld.length) {
 			let difference = items.filter(x => !this.selectedItemsOld.includes(x));
 			let idx = items.indexOf(difference[0]);
-			console.log('added=' + difference + ' at idx=' + idx);
 			this.itemCounts.insert(idx, this.fb.control('', [Validators.required, Validators.pattern('[1-9][0-9]{0,2}')]));
 		} else {
 			let difference = this.selectedItemsOld.filter(x => !items.includes(x));
 			let idx = this.selectedItemsOld.indexOf(difference[0]);
-			console.log('deleted=' + difference + ' at idx=' + idx);
 			this.itemCounts.removeAt(idx);
 		}
 		this.selectedItemsOld = items;
@@ -149,31 +149,23 @@ export class OrderEditComponent implements OnInit {
 	onOrderTypeChange(event: MatSelectChange) {
 		const orderType: string = event.value;
 		const isOrderTypeRegular = 'Regular' === orderType;
-		console.log('isOrderTypeRegular:' + isOrderTypeRegular);
 		// Disable Coat group if Order Type is "Regular"
 		this.selectItemGroupsArray[0].disabled = isOrderTypeRegular;
 	}
 
 	onSubmit() {
-		console.log('On submit form value: ' + JSON.stringify(this.orderForm.value));
 		this.save();
 	}
 
-	save() {
+	private save() {
+		this.convertDatesToMillis(this.orderForm.value);
 		this.orderService.save(this.orderForm.value).subscribe(
 			order => {
-				console.log('Order was saved successfully! ID=' + order.id);
 				this.router.navigate(['/orders']);
-				// this.initOrderForm(order);
-				// this.feedback = { type: 'success', message: 'Order was saved successfully!' };
-				/*setTimeout(() => {
-					this.router.navigate(['/orders']);
-				}, 1000);*/
 			},
 			errResponse => {
 				// this.feedback = { type: 'warning', message: 'Error saving order' };
-				alert('Error saving order. ' + errResponse.error.shortErrorMsg);
-				console.log('Error saving order. ' + errResponse.error.longErrorMsg)
+				alert(errResponse.shortErrorMsg);
 			}
 		);
 	}
@@ -183,6 +175,24 @@ export class OrderEditComponent implements OnInit {
 	}
 
 	get isEditing(): boolean {
-		return this.orderForm.get('id').value != null;
+		return this.orderForm != null && this.orderForm.get('id').value != null;
+	}
+
+	private convertDatesToMillis(order: Order) {
+		console.log('Before convertDatesToMillis: ', this.orderForm.value);
+		order.orderDateMillis = Number(order.orderDate.valueOf());
+		order.deliveryDateMillis = Number(order.deliveryDate.valueOf());
+		if (order.orderDateMillis > order.deliveryDateMillis)
+			order.deliveryDateMillis = order.orderDateMillis;
+		console.log('After convertDatesToMillis: ', this.orderForm.value);
+	}
+
+	private convertMillisToDate(order: Order) {
+		console.log('Before convertMillisToDate: ', order);
+		if (order.deliveryDateMillis)
+			order.deliveryDate = moment(order.deliveryDateMillis);
+		if (order.orderDateMillis)
+			order.orderDate = moment(order.orderDateMillis);
+		console.log('After convertMillisToDate: ', order);
 	}
 }

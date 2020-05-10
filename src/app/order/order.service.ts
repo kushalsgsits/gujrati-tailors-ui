@@ -23,22 +23,19 @@ export class OrderService {
 			result => {
 				this.orderList = result;
 			},
-			err => {
+			errResponse => {
 				this.orderList = [];
-				console.error('Error getting orders: ', err);
-				alert('Error getting orders');
+				alert(errResponse.shortErrorMsg);
 			}
 		);
 	}
 
 	find(filter: OrderFilter): Observable<Order[]> {
-		let st: string = `${JSON.stringify(null === filter.deliveryStartDate ? "" : filter.deliveryStartDate)}`;
-		let end: string = `${JSON.stringify(null === filter.deliveryEndDate ? "" : filter.deliveryEndDate)}`;
 		const params = {
 			'itemCategory': `${filter.itemCategory}`,
 			'orderNumber': filter.orderNumber,
-			'deliveryStartDate': st.substring(1, st.length - 1),
-			'deliveryEndDate': end.substring(1, end.length - 1),
+			'deliveryStartDateMillis': filter.deliveryStartDateMillis,
+			'deliveryEndDateMillis': filter.deliveryEndDateMillis,
 			'mobile': filter.mobile,
 			'name': filter.name
 		};

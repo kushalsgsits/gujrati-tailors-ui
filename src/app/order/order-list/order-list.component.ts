@@ -98,6 +98,7 @@ export class OrderListComponent implements OnInit {
 	}
 
 	search(): void {
+		this.convertDatesToMillis(this.filterForm.value);
 		this.orderService.load(this.filterForm.value);
 	}
 
@@ -114,15 +115,11 @@ export class OrderListComponent implements OnInit {
 		if (confirm('Are you sure?')) {
 			this.orderService.delete(order).subscribe(() => {
 				// this.feedback = { type: 'success', message: 'Delete was successful!' };
-				/*setTimeout(() => {
-					this.search();
-				}, 1000);*/
 				this.search();
 			},
 				errResponse => {
 					// this.feedback = { type: 'warning', message: 'Error deleting order' };
-					console.log('Error deleting order. ' + errResponse.error.longErrorMsg)
-					alert('Error deleting order. ' + errResponse.error.shortErrorMsg);
+					alert(errResponse.shortErrorMsg);
 				}
 			);
 		}
@@ -136,4 +133,8 @@ export class OrderListComponent implements OnInit {
 		this.isFilterPanelExpanded = false;
 	}
 
+	convertDatesToMillis(orderFilter: OrderFilter) {
+		orderFilter.deliveryStartDateMillis = orderFilter.deliveryStartDate.valueOf();
+		orderFilter.deliveryEndDateMillis = orderFilter.deliveryEndDate.valueOf();
+	}
 }

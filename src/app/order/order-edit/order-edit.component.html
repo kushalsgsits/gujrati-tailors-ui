@@ -17,7 +17,7 @@
 			</mat-form-field>
 			<mat-form-field appearance="outline">
 				<mat-label>Order Number</mat-label> 
-				<input matInput formControlName="orderNumber">
+				<input matInput formControlName="orderNumber" type="number">
 			</mat-form-field>
 		</div>
 		<div>
@@ -41,7 +41,7 @@
 			</mat-form-field>
 			<mat-form-field appearance="outline">
 				<mat-label>Mobile</mat-label>
-				<input matInput formControlName="mobile">
+				<input matInput formControlName="mobile" type="number">
 			</mat-form-field>
 		</div>
 		<div>
@@ -57,7 +57,7 @@
 		<div formArrayName="itemCounts">
 			<mat-form-field appearance="outline" class="item-form-field" *ngFor="let item of itemCounts.controls; let i=index">
 				<mat-label>{{orderForm.value.itemNames[i]}} Qty</mat-label> 
-				<input matInput [formControlName]="i">
+				<input matInput [formControlName]="i" type="number">
 			</mat-form-field>
 		</div>
 		<div>

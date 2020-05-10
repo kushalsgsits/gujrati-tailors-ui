@@ -35,13 +35,11 @@ export class LoginComponent implements OnInit {
 		let url = `${this.api}`;
 		this.http.post<JwtToken>(url, formValues).subscribe(
 			jwtToken => {
-				// console.log("JWT: " + jwtToken.token);
 				this.auth.setToken(jwtToken.token);
 				this.router.navigate(['/orders/new']);
 			},
 			errResponse => {
-				console.log('Login failed: ', errResponse);
-				alert('Login failed. ' + errResponse.error.shortErrorMsg);
+				alert(errResponse.shortErrorMsg);
 			}
 		);
 	}

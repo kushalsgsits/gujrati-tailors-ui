@@ -1,7 +1,9 @@
 export class Order {
 	id: number;
-	orderDate: string;
-	deliveryDate: string;
+	orderDate;
+	orderDateMillis: number;
+	deliveryDate;
+	deliveryDateMillis: number;
 	orderType: string;
 	orderNumber: number;
 	name: string;

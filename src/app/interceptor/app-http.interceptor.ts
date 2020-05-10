@@ -3,6 +3,7 @@ import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor, Htt
 import { AuthService } from '../auth/auth.service';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class AppHttpInterceptor implements HttpInterceptor {
@@ -24,7 +25,6 @@ export class AppHttpInterceptor implements HttpInterceptor {
 
 		updatedRequest = updatedRequest.clone({ headers: updatedRequest.headers.set('Accept', 'application/json') });
 
-		console.log('Old Request: ', request);
 		console.log('Updated Request: ', updatedRequest);
 
 		return next.handle(updatedRequest).pipe(
@@ -36,25 +36,23 @@ export class AppHttpInterceptor implements HttpInterceptor {
 				}
 				return event;
 			}),
-			catchError(this.handleError)
+			catchError(err => {
+				let errorMsg: string;
+				if (err.error instanceof Error) {
+					// A client-side or network error occurred. Handle it accordingly.
+					errorMsg = `An error occurred: ${err.error.message}`;
+				} else {
+					// The backend returned an unsuccessful response code.
+					// The response body may contain clues as to what went wrong,
+					errorMsg = `Backend returned code ${err.status}, body was: ${err.error}`;
+				}
+				console.log(errorMsg, err.error);
+				if (err.status === 401) {
+					this.auth.logout();
+				}
+				return throwError(err.error);
+			})
 		);
 	}
 
-	private handleError(err: HttpErrorResponse): Observable<any> {
-		let errorMsg: string;
-		if (err.error instanceof Error) {
-			// A client-side or network error occurred. Handle it accordingly.
-			errorMsg = `An error occurred: ${err.error.message}`;
-		} else {
-			// The backend returned an unsuccessful response code.
-			// The response body may contain clues as to what went wrong,
-			errorMsg = `Backend returned code ${err.status}, body was: ${err.error}`;
-		}
-		console.error(errorMsg);
-
-		if (err.status === 401) {
-			this.auth.logout();
-		}
-		return Observable.throw(errorMsg);
-	}
 }
