@@ -82,7 +82,11 @@ export class OrderListComponent implements OnInit {
 	}
 
 	initFilterForm() {
-		this.filterForm = this.fb.group({
+		this.filterForm = this.createBlankFilterFormGroup();
+	}
+
+	private createBlankFilterFormGroup() {
+		const formGroup = this.fb.group({
 			itemCategory: [''],
 			orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
 			deliveryStartDate: [''],
@@ -90,9 +94,16 @@ export class OrderListComponent implements OnInit {
 			name: [''],
 			mobile: ['', Validators.pattern('[\\d]{10}$')]
 		});
+		return formGroup;
+	}
+
+	onClear() {
+		this.feedback = {};
+		this.filterForm = this.createBlankFilterFormGroup();
 	}
 
 	onSubmit() {
+		this.feedback = {};
 		this.closeFilterPanel();
 		this.search();
 	}
@@ -113,10 +124,11 @@ export class OrderListComponent implements OnInit {
 
 	delete(order: Order): void {
 		if (confirm('Are you sure?')) {
-			this.orderService.delete(order).subscribe(() => {
-				// this.feedback = { type: 'success', message: 'Delete was successful!' };
-				this.search();
-			},
+			this.orderService.delete(order).subscribe(
+				() => {
+					// this.feedback = { type: 'success', message: 'Delete was successful!' };
+					this.search();
+				},
 				errResponse => {
 					// this.feedback = { type: 'warning', message: 'Error deleting order' };
 					alert(errResponse.shortErrorMsg);
@@ -133,8 +145,10 @@ export class OrderListComponent implements OnInit {
 		this.isFilterPanelExpanded = false;
 	}
 
-	convertDatesToMillis(orderFilter: OrderFilter) {
-		orderFilter.deliveryStartDateMillis = orderFilter.deliveryStartDate.valueOf();
-		orderFilter.deliveryEndDateMillis = orderFilter.deliveryEndDate.valueOf();
+	private convertDatesToMillis(orderFilter: OrderFilter) {
+		console.log('Before convertDatesToMillis: ', orderFilter);
+		orderFilter.deliveryStartDateMillis = orderFilter.deliveryStartDate ? Number(orderFilter.deliveryStartDate.valueOf()) : 0;
+		orderFilter.deliveryEndDateMillis = orderFilter.deliveryEndDate ? Number(orderFilter.deliveryEndDate.valueOf()) : 0;
+		console.log('After convertDatesToMillis: ', orderFilter);
 	}
 }
