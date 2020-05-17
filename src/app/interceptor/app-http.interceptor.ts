@@ -44,11 +44,15 @@ export class AppHttpInterceptor implements HttpInterceptor {
 				} else {
 					// The backend returned an unsuccessful response code.
 					// The response body may contain clues as to what went wrong,
-					errorMsg = `Backend returned code ${err.status}, body was: ${err.error}`;
+					errorMsg = `An error occurred: ${err.message}`;
 				}
-				console.log(errorMsg, err.error);
+				console.log(errorMsg, err);
 				if (err.status === 401) {
 					this.auth.logout();
+				}
+				if (!err.error.shortErrorMsg) {
+					err.shortErrorMsg = errorMsg;
+					return throwError(err);
 				}
 				return throwError(err.error);
 			})

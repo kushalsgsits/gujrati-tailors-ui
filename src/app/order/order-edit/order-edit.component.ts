@@ -2,14 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { OrderService } from '../order.service';
-import { Order, selectItemGroups, SelectItemGroup } from '../order';
-import { map, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 import { MatSelectChange } from '@angular/material/select';
 
+import { OrderService } from '../order.service';
+import { Order, selectItemGroups, SelectItemGroup } from '../order';
+
+import { map, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { NgxSpinnerService } from "ngx-spinner";
 
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
@@ -63,7 +66,8 @@ export class OrderEditComponent implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 		private orderService: OrderService,
-		private fb: FormBuilder) {
+		private fb: FormBuilder,
+		private spinner: NgxSpinnerService) {
 	}
 
 	ngOnInit() {
@@ -75,6 +79,7 @@ export class OrderEditComponent implements OnInit {
 	}
 
 	initOrder() {
+		this.spinner.show();
 		this.route.params
 			.pipe(
 				map(p => p.id),
@@ -93,8 +98,10 @@ export class OrderEditComponent implements OnInit {
 					this.selectedItemsOld = order.itemNames;
 					this.feedback = {};
 					this.initOrderForm(order);
+					this.spinner.hide();
 				},
 				errResponse => {
+					this.spinner.hide();
 					// this.feedback = { type: 'warning', message: 'Error loading order details. Please check internet connection or contact Kushal' };
 					alert(errResponse.shortErrorMsg);
 				}

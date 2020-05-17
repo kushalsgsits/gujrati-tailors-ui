@@ -6,6 +6,8 @@
 	
 	<mat-error *ngIf="feedback" class="alert alert-{{feedback.type}}">{{feedback.message}}</mat-error>
 	
+	<ngx-spinner template="<img src='/icons/spinner.gif' />"></ngx-spinner>
+	
 	<form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
 		<div>
 			<mat-form-field appearance="outline">

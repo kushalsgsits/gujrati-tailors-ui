@@ -2,6 +2,8 @@
   <header color="primary">
 	<h2>Please login to proceed</h2>
   </header>
+  
+  <ngx-spinner template="<img src='/icons/spinner.gif' />"></ngx-spinner>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
 

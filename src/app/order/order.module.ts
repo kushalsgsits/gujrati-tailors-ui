@@ -23,6 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 
+import { NgxSpinnerModule } from "ngx-spinner";
+
 @NgModule({
 	imports: [
 		CommonModule,
@@ -42,7 +44,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 		MatRadioModule,
 		MatSelectModule,
 		MatTableModule,
-		MatExpansionModule
+		MatExpansionModule,
+		NgxSpinnerModule
 	],
 	declarations: [
 		OrderListComponent,

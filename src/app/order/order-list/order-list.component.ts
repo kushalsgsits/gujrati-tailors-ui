@@ -8,6 +8,7 @@ import { Order, itemCategories } from '../order';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { NgxSpinnerService } from "ngx-spinner";
 
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
@@ -73,7 +74,11 @@ export class OrderListComponent implements OnInit {
 		return this.orderService.orderList;
 	}
 
-	constructor(private orderService: OrderService, private fb: FormBuilder, private router: Router) {
+	constructor(
+		private orderService: OrderService,
+		private fb: FormBuilder,
+		private router: Router,
+		private spinner: NgxSpinnerService) {
 	}
 
 	ngOnInit() {
@@ -109,8 +114,10 @@ export class OrderListComponent implements OnInit {
 	}
 
 	search(): void {
+		this.spinner.show();
 		this.convertDatesToMillis(this.filterForm.value);
 		this.orderService.load(this.filterForm.value);
+		this.spinner.hide();
 	}
 
 	onCancel() {

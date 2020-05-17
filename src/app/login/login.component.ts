@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../models/User'
 import { JwtToken } from '../models/JwtToken'
 import { environment } from '../../environments/environment';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
 	selector: 'app-login',
@@ -17,7 +18,10 @@ export class LoginComponent implements OnInit {
 	form: FormGroup;
 	api = environment.apiUrl + 'login';
 
-	constructor(private auth: AuthService, private http: HttpClient, private router: Router) { }
+	constructor(private auth: AuthService,
+		private http: HttpClient,
+		private router: Router,
+		private spinner: NgxSpinnerService) { }
 
 	ngOnInit() {
 		if (this.auth.isLoggedIn()) {
@@ -32,13 +36,16 @@ export class LoginComponent implements OnInit {
 	}
 
 	onSubmit(formValues: User) {
+		this.spinner.show();
 		let url = `${this.api}`;
 		this.http.post<JwtToken>(url, formValues).subscribe(
 			jwtToken => {
 				this.auth.setToken(jwtToken.token);
 				this.router.navigate(['/orders/new']);
+				this.spinner.hide();
 			},
 			errResponse => {
+				this.spinner.hide();
 				alert(errResponse.shortErrorMsg);
 			}
 		);

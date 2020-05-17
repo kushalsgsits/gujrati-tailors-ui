@@ -60,3 +60,8 @@ mat-expansion-panel .mat-form-field-infix {
 .space-5px {
 	padding: 0.3em;
 }
+
+ngx-spinner img {
+	height: 3em;
+	width: 3em;
+}

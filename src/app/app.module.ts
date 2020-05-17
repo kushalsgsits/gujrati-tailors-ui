@@ -22,6 +22,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
 import 'hammerjs';
+import { NgxSpinnerModule } from "ngx-spinner";
+
+
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { OrderModule } from './order/order.module';
@@ -52,6 +55,7 @@ import { AppHttpInterceptor } from './interceptor/app-http.interceptor';
 		MatInputModule,
 		MatRadioModule,
 		MatSelectModule,
+		NgxSpinnerModule,
 		OrderModule
 	],
 	providers: [
