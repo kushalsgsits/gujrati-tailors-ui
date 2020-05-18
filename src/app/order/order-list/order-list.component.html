@@ -7,7 +7,8 @@
 			</mat-panel-title>
 	    	<mat-panel-description>
 	    		<span>
-		    		<span *ngIf="filterForm.value.itemCategory"><mat-icon>category</mat-icon>{{filterForm.value.itemCategory}}  </span>
+	    			<span *ngIf="!(isFilterPanelExpanded || filterForm.value.name || (filterForm.value.itemCategory && filterForm.value.itemCategory.length > 0) || filterForm.value.orderNumber || filterForm.value.deliveryStartDate || filterForm.value.deliveryEndDate || filterForm.value.mobile)">Tap to add filters</span>
+		    		<span *ngIf="filterForm.value.itemCategory && filterForm.value.itemCategory.length > 0"><mat-icon>category</mat-icon>{{filterForm.value.itemCategory}}  </span>
 		    		<span *ngIf="filterForm.value.orderNumber"><mat-icon>label_important</mat-icon>{{filterForm.value.orderNumber}}  </span>
 		    		<span *ngIf="filterForm.value.deliveryStartDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryStartDate | date:'dd-MMM-yyyy'}}  </span>
 		    		<span *ngIf="filterForm.value.deliveryEndDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryEndDate | date:'dd-MMM-yyyy'}}  </span>
@@ -65,10 +66,21 @@
 	</mat-expansion-panel>
 	
 	<ngx-spinner template="<img src='/icons/spinner.gif' />"></ngx-spinner>
-
+	
 	<div *ngIf="orderList.length > 0">
+	
+		<h3>Orders Summary</h3>
+		<div class="mat-elevation-z8 orders-summary">
+			<div *ngFor="let itemCat of itemCategoriesArray">
+				<div class="item-category" *ngIf="ordersSummary[itemCat]">
+					<div class="item-category-name">{{itemCat}}</div>
+					<mat-divider></mat-divider>
+					<div class="item-category-count">{{ordersSummary[itemCat]}}</div>
+				</div>
+			</div>		
+		</div>
+	
 		<h3>Orders List</h3>
-		<mat-error *ngIf="feedback" class="alert alert-{{feedback.type}}">{{feedback.message}}</mat-error>
 		<table mat-table [dataSource]="orderList" multiTemplateDataRows class="mat-elevation-z8">
 
 			<ng-container matColumnDef="orderNumber">
@@ -126,6 +138,10 @@
 			</tr>
 			<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 		</table>
+	</div>
+	
+	<div *ngIf="orderList.length === 0">
+		<h3>No order available as per applied filter(s)</h3>
 	</div>
 
 </div>

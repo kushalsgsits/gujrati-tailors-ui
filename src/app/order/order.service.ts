@@ -7,7 +7,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class OrderService {
-	orderList: Order[] = [];
 	api = environment.apiUrl + 'orders';
 
 	constructor(private http: HttpClient) {
@@ -18,16 +17,8 @@ export class OrderService {
 		return this.http.get<Order>(url);
 	}
 
-	load(filter: OrderFilter): void {
-		this.find(filter).subscribe(
-			result => {
-				this.orderList = result;
-			},
-			errResponse => {
-				this.orderList = [];
-				alert(errResponse.shortErrorMsg);
-			}
-		);
+	load(filter: OrderFilter): Observable<Order[]> {
+		return this.find(filter);
 	}
 
 	find(filter: OrderFilter): Observable<Order[]> {

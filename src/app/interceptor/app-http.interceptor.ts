@@ -49,6 +49,8 @@ export class AppHttpInterceptor implements HttpInterceptor {
 				console.log(errorMsg, err);
 				if (err.status === 401) {
 					this.auth.logout();
+					err.shortErrorMsg = 'Login session expired';
+					return throwError(err);
 				}
 				if (!err.error.shortErrorMsg) {
 					err.shortErrorMsg = errorMsg;

@@ -67,3 +67,22 @@ export const selectItemGroups: SelectItemGroup[] = [
 export const itemCategories: string[] = [
 	'Coat', 'Shirt', 'Pant', 'Kurta', 'Payjama', 'Jacket', 'Safari Shirt', 'Others'
 ];
+
+export const itemNameToItemCatoriesMap = {
+	'2 Piece Suit': ['Coat', 'Pant'],
+	'3 Piece Suit': ['Coat', 'Pant', 'Jacket'],
+	'Blazer': ['Coat'],
+	'Achkan': ['Coat'],
+	'Shirt': ['Shirt'],
+	'Pant': ['Pant'],
+	'Jeans': ['Pant'],
+	'Kurti': ['Shirt'],
+	'Kurta': ['Kurta'],
+	'Payjama': ['Payjama'],
+	'Pant Payjama': ['Pant'],
+	'Pathani': ['Kurta'],
+	'Jacket': ['Jacket'],
+	'Waist Coat': ['Jacket'],
+	'Safari': ['Safari Shirt', 'Pant'],
+	'Others': ['Others']
+}

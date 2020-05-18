@@ -3,7 +3,7 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
 import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
-import { Order, itemCategories } from '../order';
+import { Order, itemCategories, itemNameToItemCatoriesMap } from '../order';
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -60,19 +60,23 @@ export const MY_FORMATS = {
 })
 export class OrderListComponent implements OnInit {
 
+	// constants
 	itemCategoriesArray: string[] = itemCategories;
+	itemNameToItemCatoriesMap = itemNameToItemCatoriesMap;
+
+	// results
+	orderList: Order[] = [];
+	ordersSummary: any = {};
+
+	// request related
 	filter = new OrderFilter();
-	selectedOrder: Order;
 	filterForm: FormGroup;
+
+	// display related
 	isFilterPanelExpanded: boolean = false;
-	dataSource = this.orderList;
 	columnsToDisplay = ['orderNumber', 'name', 'deliveryDate'];
 	expandedElement: Order | null;
 	feedback: any = {};
-
-	get orderList(): Order[] {
-		return this.orderService.orderList;
-	}
 
 	constructor(
 		private orderService: OrderService,
@@ -116,17 +120,24 @@ export class OrderListComponent implements OnInit {
 	search(): void {
 		this.spinner.show();
 		this.convertDatesToMillis(this.filterForm.value);
-		this.orderService.load(this.filterForm.value);
-		this.spinner.hide();
+		this.orderService.load(this.filterForm.value).subscribe(
+			result => {
+				this.orderList = result;
+				this.createSummary();
+				this.spinner.hide();
+			},
+			errResponse => {
+				this.orderList = [];
+				this.ordersSummary = {};
+				this.spinner.hide();
+				alert(errResponse.shortErrorMsg);
+			}
+		);
 	}
 
 	onCancel() {
 		this.feedback = {};
 		this.closeFilterPanel();
-	}
-
-	select(selected: Order): void {
-		this.selectedOrder = selected;
 	}
 
 	delete(order: Order): void {
@@ -153,9 +164,34 @@ export class OrderListComponent implements OnInit {
 	}
 
 	private convertDatesToMillis(orderFilter: OrderFilter) {
-		console.log('Before convertDatesToMillis: ', orderFilter);
 		orderFilter.deliveryStartDateMillis = orderFilter.deliveryStartDate ? Number(orderFilter.deliveryStartDate.valueOf()) : 0;
 		orderFilter.deliveryEndDateMillis = orderFilter.deliveryEndDate ? Number(orderFilter.deliveryEndDate.valueOf()) : 0;
-		console.log('After convertDatesToMillis: ', orderFilter);
+	}
+
+	private createSummary() {
+		this.ordersSummary = {};
+		if (!(this.orderList && this.orderList.length > 0)) {
+			return;
+		}
+		this.orderList.forEach(
+			order => {
+				order.itemNames.forEach(
+					(itemName, index) => {
+						// this.updateSummaryForItem(itemName, order.itemCounts[index]);
+						let itemCount = order.itemCounts[index];
+						let itemCategories: string[] = this.itemNameToItemCatoriesMap[itemName];
+						itemCategories.forEach(
+							itemCat => {
+								if (this.ordersSummary[itemCat]) {
+									this.ordersSummary[itemCat] += itemCount;
+								} else {
+									this.ordersSummary[itemCat] = itemCount;
+								}
+							}
+						)
+					}
+				);
+			}
+		);
 	}
 }

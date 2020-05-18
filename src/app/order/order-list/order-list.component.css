@@ -116,3 +116,24 @@ th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:la
 .item-table th {
 	color: rgba(0, 0, 0, .54);
 }
+
+.orders-summary {
+	display: flex;
+	flex-wrap: wrap;
+	background-color: white;
+	text-align: center;
+}
+
+.item-category {
+	padding: .5em;
+	margin: .3em;
+	width: 5em;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, .12);
+	border-width: 1px;
+	border-radius: 5px;
+}
+
+.item-category-count {
+	font-weight: 600;
+}
