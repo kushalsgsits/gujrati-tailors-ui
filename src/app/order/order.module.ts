@@ -22,8 +22,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { NgxSpinnerModule } from "ngx-spinner";
+import { OrderStatusEditDialogComponent } from './order-status-edit-dialog/order-status-edit-dialog.component';
 
 @NgModule({
 	imports: [
@@ -45,11 +48,14 @@ import { NgxSpinnerModule } from "ngx-spinner";
 		MatSelectModule,
 		MatTableModule,
 		MatExpansionModule,
+		MatTabsModule,
+		MatMenuModule,
 		NgxSpinnerModule
 	],
 	declarations: [
 		OrderListComponent,
-		OrderEditComponent
+		OrderEditComponent,
+		OrderStatusEditDialogComponent
 	],
 	providers: [OrderService],
 	exports: []

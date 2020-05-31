@@ -23,6 +23,7 @@ export class OrderService {
 
 	find(filter: OrderFilter): Observable<Order[]> {
 		const params = {
+			'orderStatus': `${filter.orderStatus}`,
 			'itemCategory': `${filter.itemCategory}`,
 			'orderNumber': filter.orderNumber,
 			'deliveryStartDateMillis': filter.deliveryStartDateMillis,

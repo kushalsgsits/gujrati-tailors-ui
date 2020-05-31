@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { MatSelectChange } from '@angular/material/select';
 
@@ -55,12 +55,13 @@ export const MY_FORMATS = {
 		{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
 	],
 })
-export class OrderEditComponent implements OnInit {
+export class OrderEditComponent implements OnInit, OnDestroy {
 
 	selectItemGroupsArray: SelectItemGroup[];
 	orderForm: FormGroup;
 	feedback: any = {};
 	selectedItemsOld: string[];
+	mySubscription: any;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -68,6 +69,16 @@ export class OrderEditComponent implements OnInit {
 		private orderService: OrderService,
 		private fb: FormBuilder,
 		private spinner: NgxSpinnerService) {
+
+		this.router.routeReuseStrategy.shouldReuseRoute = function() {
+			return false;
+		};
+		this.mySubscription = this.router.events.subscribe((event) => {
+			if (event instanceof NavigationEnd) {
+				// Trick the Router into believing it's last link wasn't previously loaded
+				this.router.navigated = false;
+			}
+		});
 	}
 
 	ngOnInit() {
@@ -76,6 +87,13 @@ export class OrderEditComponent implements OnInit {
 		this.selectItemGroupsArray[0].disabled = true;
 
 		this.initOrder();
+	}
+
+
+	ngOnDestroy() {
+		if (this.mySubscription) {
+			this.mySubscription.unsubscribe();
+		}
 	}
 
 	initOrder() {
@@ -112,6 +130,7 @@ export class OrderEditComponent implements OnInit {
 		this.convertMillisToDate(order);
 		this.orderForm = this.fb.group({
 			id: [order.id],
+			orderStatus: [order.orderStatus],
 			orderType: [order.orderType, Validators.required],
 			orderDate: [order.orderDate, Validators.required],
 			deliveryDate: [order.deliveryDate, Validators.required],
@@ -122,6 +141,7 @@ export class OrderEditComponent implements OnInit {
 			itemCounts: this.fb.array(this.getItemFormArrayFromItemCounts(order.itemCounts)),
 			notes: [order.notes, Validators.maxLength(300)]
 		});
+		this.updateCoatGroup(order.orderType);
 
 		console.log('Initialized Order form: ', this.orderForm.value);
 	}
@@ -155,23 +175,32 @@ export class OrderEditComponent implements OnInit {
 
 	onOrderTypeChange(event: MatSelectChange) {
 		const orderType: string = event.value;
-		const isOrderTypeRegular = 'Regular' === orderType;
-		// Disable Coat group if Order Type is "Regular"
-		this.selectItemGroupsArray[0].disabled = isOrderTypeRegular;
+		this.updateCoatGroup(orderType);
 	}
 
 	onSubmit() {
 		this.save();
 	}
 
+	private updateCoatGroup(orderType: string) {
+		let isOrderTypeRegular = null == orderType || 'Regular' === orderType;
+		// Disable Coat group if Order Type is "Regular"
+		this.selectItemGroupsArray[0].disabled = isOrderTypeRegular;
+	}
+
 	private save() {
+		this.spinner.show();
 		this.convertDatesToMillis(this.orderForm.value);
 		this.orderService.save(this.orderForm.value).subscribe(
 			order => {
-				this.router.navigate(['/orders']);
+				// TODO kc reload /orders/new
+				this.router.navigate(['/orders/new']);
+				this.spinner.hide();
+				alert('Order save successfully');
 			},
 			errResponse => {
 				// this.feedback = { type: 'warning', message: 'Error saving order' };
+				this.spinner.hide();
 				alert(errResponse.shortErrorMsg);
 			}
 		);

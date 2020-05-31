@@ -3,7 +3,9 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
 import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
-import { Order, itemCategories, itemNameToItemCatoriesMap } from '../order';
+import { Order, itemCategories, itemNameToItemCatoriesMap, orderStatuses } from '../order';
+import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -63,6 +65,7 @@ export class OrderListComponent implements OnInit {
 	// constants
 	itemCategoriesArray: string[] = itemCategories;
 	itemNameToItemCatoriesMap = itemNameToItemCatoriesMap;
+	orderStatusesArray: string[] = orderStatuses;
 
 	// results
 	orderList: Order[] = [];
@@ -74,7 +77,7 @@ export class OrderListComponent implements OnInit {
 
 	// display related
 	isFilterPanelExpanded: boolean = false;
-	columnsToDisplay = ['orderNumber', 'name', 'deliveryDate'];
+	columnsToDisplay = ['orderNumber', 'name', 'deliveryDate', 'actions'];
 	expandedElement: Order | null;
 	feedback: any = {};
 
@@ -82,7 +85,8 @@ export class OrderListComponent implements OnInit {
 		private orderService: OrderService,
 		private fb: FormBuilder,
 		private router: Router,
-		private spinner: NgxSpinnerService) {
+		private spinner: NgxSpinnerService,
+		private dialog: MatDialog) {
 	}
 
 	ngOnInit() {
@@ -96,12 +100,13 @@ export class OrderListComponent implements OnInit {
 
 	private createBlankFilterFormGroup() {
 		const formGroup = this.fb.group({
+			orderStatus: [''],
 			itemCategory: [''],
-			orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
 			deliveryStartDate: [''],
 			deliveryEndDate: [''],
-			name: [''],
-			mobile: ['', Validators.pattern('[\\d]{10}$')]
+			orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
+			mobile: ['', Validators.pattern('[\\d]{10}$')],
+			name: ['']
 		});
 		return formGroup;
 	}
@@ -115,6 +120,15 @@ export class OrderListComponent implements OnInit {
 		this.feedback = {};
 		this.closeFilterPanel();
 		this.search();
+	}
+
+	onTabChanged(event) {
+		this.filterForm = this.createBlankFilterFormGroup();
+	}
+
+	onCancel() {
+		this.feedback = {};
+		this.closeFilterPanel();
 	}
 
 	search(): void {
@@ -133,11 +147,6 @@ export class OrderListComponent implements OnInit {
 				alert(errResponse.shortErrorMsg);
 			}
 		);
-	}
-
-	onCancel() {
-		this.feedback = {};
-		this.closeFilterPanel();
 	}
 
 	delete(order: Order): void {
@@ -161,6 +170,16 @@ export class OrderListComponent implements OnInit {
 
 	closeFilterPanel() {
 		this.isFilterPanelExpanded = false;
+	}
+
+	expandTableRow(order: Order) {
+		this.expandedElement = this.expandedElement === order ? null : order;
+	}
+
+	openOrderStatusDialog(order: Order) {
+		this.dialog.open(OrderStatusEditDialogComponent, {
+			data: { order: order }
+		});
 	}
 
 	private convertDatesToMillis(orderFilter: OrderFilter) {

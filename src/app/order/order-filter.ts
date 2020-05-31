@@ -5,6 +5,7 @@ export class OrderFilter {
 	deliveryEndDateMillis;
 	itemCategory: string[] = [];
 	orderNumber = '';
+	orderStatus = '';
 	name = '';
 	mobile = '';
 }

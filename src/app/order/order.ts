@@ -6,6 +6,7 @@ export class Order {
 	deliveryDateMillis: number;
 	orderType: string;
 	orderNumber: number;
+	orderStatus: string;
 	name: string;
 	mobile: number;
 	itemNames: string[];
@@ -86,3 +87,11 @@ export const itemNameToItemCatoriesMap = {
 	'Safari': ['Safari Shirt', 'Pant'],
 	'Others': ['Others']
 }
+
+export const orderStatuses: string[] = [
+	'Created',
+	'In Progress',
+	'Ready',
+	'Delivered',
+	'Delivered (Unpaid)'
+];
