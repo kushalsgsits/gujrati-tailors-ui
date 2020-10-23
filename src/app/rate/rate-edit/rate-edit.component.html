@@ -1,0 +1,28 @@
+<div class="container" novalidate>
+	<header color="primary">
+		<h3>Update Rates</h3>
+	</header>
+	
+	<ngx-spinner template="<img src='/assets/icons/spinner.gif' />"></ngx-spinner>
+	
+	<form [formGroup]="rateForm" (ngSubmit)="onSubmit()">
+		<div *ngFor="let groupName of groupFormArrayNames; let grpIdx=index">
+			<h4>{{groupName}}</h4>
+			<div [formArrayName]="groupName">
+				<mat-form-field appearance="outline" *ngFor="let itemControl of getGroupFormArrayControls(groupName).controls; let formCtrlIdx=index">
+					<!-- <mat-label>{{getItemDispValue(groupedItemsWithRate[grpIdx].groupItems[formCtrlIdx].id)}}</mat-label>  -->
+					<mat-label>{{getItemDispValue(groupedItemsWithRate[grpIdx].groupItems[formCtrlIdx].id)}}</mat-label>
+					<start from here>
+					<input matInput [formControlName]="formCtrlIdx" type="number">
+				</mat-form-field>
+			</div>
+			
+		</div>
+		<div>{{rateForm.value | json}}</div>
+		<div>
+			<button mat-raised-button color="primary" type="submit" class="button" [disabled]="!rateForm.valid">Update Rates</button>
+			<span class="space-5px"></span>
+			<button mat-raised-button type="button" (click)="onCancel()">Cancel</button>
+		</div>
+	</form>
+</div>

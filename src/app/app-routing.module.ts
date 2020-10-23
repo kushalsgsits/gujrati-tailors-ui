@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { RateEditComponent } from './rate/rate-edit/rate-edit.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth/auth.guard';
 
@@ -10,10 +10,10 @@ const routes: Routes = [
 		component: LoginComponent
 	},
 	{
-		path: 'dashboard',
-		component: DashboardComponent,
+		path: 'rates',
+		component: RateEditComponent,
 		canActivate: [AuthGuard]
-	}
+	},
 ];
 
 

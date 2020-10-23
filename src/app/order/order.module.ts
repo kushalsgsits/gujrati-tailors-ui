@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { OrderListComponent } from './order-list/order-list.component';
 import { OrderEditComponent } from './order-edit/order-edit.component';
 import { OrderService } from './order.service';
+import { ItemService } from '../item/item.service';
 import { ORDER_ROUTES } from './order.routes';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -57,7 +58,7 @@ import { OrderStatusEditDialogComponent } from './order-status-edit-dialog/order
 		OrderEditComponent,
 		OrderStatusEditDialogComponent
 	],
-	providers: [OrderService],
+	providers: [OrderService, ItemService],
 	exports: []
 })
 export class OrderModule { }

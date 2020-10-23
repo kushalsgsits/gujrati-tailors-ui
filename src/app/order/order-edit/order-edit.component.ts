@@ -6,7 +6,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { MatSelectChange } from '@angular/material/select';
 
 import { OrderService } from '../order.service';
-import { Order, selectItemGroups, SelectItemGroup } from '../order';
+import { ItemService } from '../../item/item.service';
+import { Order, SelectItemGroup } from '../order';
+import { getItemDispVal, getItemRate, removeSafariShirt } from './../../utils';
 
 import { map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -57,7 +59,7 @@ export const MY_FORMATS = {
 })
 export class OrderEditComponent implements OnInit, OnDestroy {
 
-	selectItemGroupsArray: SelectItemGroup[];
+	groupedItemsWithRate: SelectItemGroup[];
 	orderForm: FormGroup;
 	feedback: any = {};
 	selectedItemsOld: string[];
@@ -67,6 +69,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private router: Router,
 		private orderService: OrderService,
+		private itemService: ItemService,
 		private fb: FormBuilder,
 		private spinner: NgxSpinnerService) {
 
@@ -82,10 +85,6 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.selectItemGroupsArray = selectItemGroups.copyWithin(0, 0);
-		// Disable Coat group
-		this.selectItemGroupsArray[0].disabled = true;
-
 		this.initOrder();
 	}
 
@@ -96,7 +95,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	initOrder() {
+	private initOrder() {
 		this.spinner.show();
 		this.route.params
 			.pipe(
@@ -105,7 +104,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 					if (id === 'new') {
 						const emptyOrder = new Order();
 						emptyOrder.orderDate = moment();
-						emptyOrder.itemNames = [];
+						emptyOrder.itemIds = [];
 						return of(emptyOrder);
 					}
 					return this.orderService.findById(id);
@@ -113,10 +112,27 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 			)
 			.subscribe(
 				order => {
-					this.selectedItemsOld = order.itemNames;
-					this.feedback = {};
-					this.initOrderForm(order);
-					this.spinner.hide();
+					// For creating new order, pass dateMillis=0 to get latest rates
+					// For editing an order, pass dateMillis as per orderDate of that order
+					let dateMillis = this.isEditing ? order.orderDateMillis : 0;
+					this.itemService.getGroupedItemsWithRate({ dateMillis: dateMillis }).subscribe(
+						groupedItemsWithRate => {
+							this.groupedItemsWithRate = groupedItemsWithRate;
+							// Remove Safari shrt from items list as it is not to be shown in UI
+							this.removeSafariShirtFromItems();
+							// Disable Coat group
+							this.groupedItemsWithRate[0].disabled = true;
+							console.log('GroupedItemsWithRate', this.groupedItemsWithRate);
+							this.selectedItemsOld = order.itemIds;
+							this.feedback = {};
+							this.initOrderForm(order);
+							this.spinner.hide();
+						},
+						errRes => {
+							this.spinner.hide();
+							alert(errRes.shortErrorMsg);
+						}
+					);
 				},
 				errResponse => {
 					this.spinner.hide();
@@ -126,7 +142,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	initOrderForm(order: Order) {
+	private initOrderForm(order: Order) {
 		this.convertMillisToDate(order);
 		this.orderForm = this.fb.group({
 			id: [order.id],
@@ -134,15 +150,15 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 			orderType: [order.orderType, Validators.required],
 			orderDate: [order.orderDate, Validators.required],
 			deliveryDate: [order.deliveryDate, Validators.required],
-			orderNumber: [order.orderNumber, [Validators.required, Validators.pattern('[\\d]{1,4}')]],
+			orderNumber: [order.orderNumber, [Validators.required, Validators.pattern('[\\d]{1,4}$')]],
 			name: [order.name, Validators.required],
 			mobile: [order.mobile, [Validators.required, Validators.pattern('[\\d]{10}$')]],
-			itemNames: [order.itemNames, Validators.required],
+			itemIds: [order.itemIds, Validators.required],
 			itemCounts: this.fb.array(this.getItemFormArrayFromItemCounts(order.itemCounts)),
+			itemRates: this.fb.array(this.getItemRateFormArrayFromItemRates(order.itemRates)),
 			notes: [order.notes, Validators.maxLength(300)]
 		});
 		this.updateCoatGroup(order.orderType);
-
 		console.log('Initialized Order form: ', this.orderForm.value);
 	}
 
@@ -155,20 +171,36 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		return arr;
 	}
 
+	getItemRateFormArrayFromItemRates(itemRates: number[]): FormControl[] {
+		const arr: FormControl[] = [];
+		if (null == itemRates || itemRates.length == 0) {
+			return arr;
+		}
+		itemRates.forEach(rate => arr.push(this.fb.control(rate, [Validators.required, Validators.pattern('[1-9][0-9]{0,3}')])));
+		return arr;
+	}
+
 	get itemCounts(): FormArray {
 		return this.orderForm.get('itemCounts') as FormArray;
+	}
+
+	get itemRates(): FormArray {
+		return this.orderForm.get('itemRates') as FormArray;
 	}
 
 	onItemSelectionChange(event: MatSelectChange) {
 		const items: string[] = event.value;
 		if (items.length > this.selectedItemsOld.length) {
-			let difference = items.filter(x => !this.selectedItemsOld.includes(x));
-			let idx = items.indexOf(difference[0]);
+			let addedItemId = items.filter(x => !this.selectedItemsOld.includes(x))[0];
+			let idx = items.indexOf(addedItemId);
 			this.itemCounts.insert(idx, this.fb.control('', [Validators.required, Validators.pattern('[1-9][0-9]{0,2}')]));
+			let currItemRate = getItemRate(addedItemId, this.groupedItemsWithRate);
+			this.itemRates.insert(idx, this.fb.control(currItemRate, [Validators.required, Validators.pattern('[1-9][0-9]{0,3}')]));
 		} else {
 			let difference = this.selectedItemsOld.filter(x => !items.includes(x));
 			let idx = this.selectedItemsOld.indexOf(difference[0]);
 			this.itemCounts.removeAt(idx);
+			this.itemRates.removeAt(idx);
 		}
 		this.selectedItemsOld = items;
 	}
@@ -185,7 +217,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 	private updateCoatGroup(orderType: string) {
 		let isOrderTypeRegular = null == orderType || 'Regular' === orderType;
 		// Disable Coat group if Order Type is "Regular"
-		this.selectItemGroupsArray[0].disabled = isOrderTypeRegular;
+		this.groupedItemsWithRate[0].disabled = isOrderTypeRegular;
 	}
 
 	private save() {
@@ -218,17 +250,28 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		console.log('Before convertDatesToMillis: ', this.orderForm.value);
 		order.orderDateMillis = Number(order.orderDate.valueOf());
 		order.deliveryDateMillis = Number(order.deliveryDate.valueOf());
-		if (order.orderDateMillis > order.deliveryDateMillis)
+		if (order.orderDateMillis > order.deliveryDateMillis) {
 			order.deliveryDateMillis = order.orderDateMillis;
+		}
 		console.log('After convertDatesToMillis: ', this.orderForm.value);
 	}
 
 	private convertMillisToDate(order: Order) {
 		console.log('Before convertMillisToDate: ', order);
-		if (order.deliveryDateMillis)
+		if (order.deliveryDateMillis) {
 			order.deliveryDate = moment(order.deliveryDateMillis);
-		if (order.orderDateMillis)
+		}
+		if (order.orderDateMillis) {
 			order.orderDate = moment(order.orderDateMillis);
+		}
 		console.log('After convertMillisToDate: ', order);
+	}
+
+	private removeSafariShirtFromItems() {
+		removeSafariShirt(this.groupedItemsWithRate);
+	}
+
+	getItemDispValue(itemId: string) {
+		return getItemDispVal(itemId, this.groupedItemsWithRate);
 	}
 }

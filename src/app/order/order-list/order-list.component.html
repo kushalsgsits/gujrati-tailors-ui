@@ -94,7 +94,7 @@
 		</form>
 	</mat-expansion-panel>
 	
-	<ngx-spinner template="<img src='/icons/spinner.gif' />"></ngx-spinner>
+	<ngx-spinner template="<img src='/assets/icons/spinner.gif' />"></ngx-spinner>
 	
 	<div *ngIf="orderList.length > 0">
 	
@@ -157,8 +157,8 @@
 										<th>Item</th>
 										<th>Qty</th>
 									</tr>
-									<tr *ngFor="let item of element.itemNames; let i=index">
-										<td>{{element.itemNames[i]}}</td>
+									<tr *ngFor="let item of element.itemIds; let i=index">
+										<td>{{getItemDispVal(element.itemIds[i])}}</td>
 										<td>{{element.itemCounts[i]}}</td>
 									</tr>
 								</table>

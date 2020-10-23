@@ -3,7 +3,8 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
 import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
-import { Order, itemCategories, itemNameToItemCatoriesMap, orderStatuses } from '../order';
+import { ItemService } from '../../item/item.service';
+import { Order, itemCategories, orderStatuses, SelectItemGroup, SelectItem } from '../order';
 import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -64,7 +65,7 @@ export class OrderListComponent implements OnInit {
 
 	// constants
 	itemCategoriesArray: string[] = itemCategories;
-	itemNameToItemCatoriesMap = itemNameToItemCatoriesMap;
+	itemIdToItemMap: any;
 	orderStatusesArray: string[] = orderStatuses;
 
 	// results
@@ -86,12 +87,25 @@ export class OrderListComponent implements OnInit {
 		private fb: FormBuilder,
 		private router: Router,
 		private spinner: NgxSpinnerService,
-		private dialog: MatDialog) {
+		private dialog: MatDialog,
+		private itemService: ItemService) {
 	}
 
 	ngOnInit() {
-		this.initFilterForm();
-		this.search();
+		this.spinner.show();
+		// Pass dateMillis=0 to get latest rates
+		this.itemService.getGroupedItemsWithRate({ dateMillis: 0 }).subscribe(
+			groupedItemsWithRate => {
+				this.initItemIdToItemCatoriesMap(groupedItemsWithRate);
+				this.initFilterForm();
+				this.search();
+				this.spinner.hide();
+			},
+			errRes => {
+				this.spinner.hide();
+				alert(errRes.shortErrorMsg);
+			}
+		);
 	}
 
 	initFilterForm() {
@@ -194,23 +208,49 @@ export class OrderListComponent implements OnInit {
 		}
 		this.orderList.forEach(
 			order => {
-				order.itemNames.forEach(
-					(itemName, index) => {
-						// this.updateSummaryForItem(itemName, order.itemCounts[index]);
+				order.itemIds.forEach(
+					(itemId, index) => {
 						let itemCount = order.itemCounts[index];
-						let itemCategories: string[] = this.itemNameToItemCatoriesMap[itemName];
-						itemCategories.forEach(
-							itemCat => {
-								if (this.ordersSummary[itemCat]) {
-									this.ordersSummary[itemCat] += itemCount;
-								} else {
-									this.ordersSummary[itemCat] = itemCount;
+						let item: SelectItem = this.itemIdToItemMap[itemId];
+						if (item.type === 'Combo') {
+							item.comboItemIds.forEach(
+								comboItemId => {
+									let itemCat = this.itemIdToItemMap[comboItemId].type;
+									if (this.ordersSummary[itemCat]) {
+										this.ordersSummary[itemCat] += itemCount;
+									} else {
+										this.ordersSummary[itemCat] = itemCount;
+									}
 								}
+							)
+						} else {
+							if (this.ordersSummary[item.type]) {
+								this.ordersSummary[item.type] += itemCount;
+							} else {
+								this.ordersSummary[item.type] = itemCount;
 							}
-						)
+						}
 					}
 				);
 			}
 		);
+	}
+
+	private initItemIdToItemCatoriesMap(groupedItemsWithRate: SelectItemGroup[]) {
+		this.itemIdToItemMap = {};
+		groupedItemsWithRate.forEach(
+			group => {
+				group.groupItems.forEach(
+					item => {
+						this.itemIdToItemMap[item.id] = item;
+					}
+				)
+			}
+		)
+		console.log('itemIdToItemMap', this.itemIdToItemMap);
+	}
+
+	getItemDispVal(itemId: string) {
+		return this.itemIdToItemMap[itemId].dispVal;
 	}
 }
