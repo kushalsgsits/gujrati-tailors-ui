@@ -83,11 +83,17 @@ th.mat-header-cell:last-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:la
 }
 
 .element-detail-2, .element-detail-3 {
-	padding-left: 2em;
+	padding-left: 1em;
 }
 
 .element-detail-2 .mat-icon, .element-detail-3 .mat-icon {
 	color: rgba(0, 0, 0, 0.4);
+}
+
+.rupee-symbol {
+	color: rgba(0, 0, 0, 0.4);
+	padding-left: 0.2em;
+	padding-right: 0.2em;
 }
 
 .element-detail-label {

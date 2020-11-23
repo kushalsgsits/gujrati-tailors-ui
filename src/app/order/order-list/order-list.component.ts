@@ -4,7 +4,9 @@ import { Router } from '@angular/router'
 import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
 import { ItemService } from '../../item/item.service';
+import { PrintService } from '../../print/print.service';
 import { Order, itemCategories, orderStatuses, SelectItemGroup, SelectItem } from '../order';
+import { calcOrderTotalUtil } from './../../utils';
 import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -88,7 +90,8 @@ export class OrderListComponent implements OnInit {
 		private router: Router,
 		private spinner: NgxSpinnerService,
 		private dialog: MatDialog,
-		private itemService: ItemService) {
+		private itemService: ItemService,
+		private printService: PrintService) {
 	}
 
 	ngOnInit() {
@@ -167,11 +170,9 @@ export class OrderListComponent implements OnInit {
 		if (confirm('Are you sure?')) {
 			this.orderService.delete(order).subscribe(
 				() => {
-					// this.feedback = { type: 'success', message: 'Delete was successful!' };
 					this.search();
 				},
 				errResponse => {
-					// this.feedback = { type: 'warning', message: 'Error deleting order' };
 					alert(errResponse.shortErrorMsg);
 				}
 			);
@@ -180,6 +181,10 @@ export class OrderListComponent implements OnInit {
 
 	edit(order: Order): void {
 		this.router.navigate(['/orders', order.id]);
+	}
+
+	printInvoice(order: Order): void {
+		this.printService.printDocument('invoice', order.id);
 	}
 
 	closeFilterPanel() {
@@ -251,6 +256,11 @@ export class OrderListComponent implements OnInit {
 	}
 
 	getItemDispVal(itemId: string) {
-		return this.itemIdToItemMap[itemId].dispVal;
+		let item = this.itemIdToItemMap[itemId];
+		return item.name;
+	}
+
+	calcOrderTotal(order: Order) {
+		return calcOrderTotalUtil(order);
 	}
 }

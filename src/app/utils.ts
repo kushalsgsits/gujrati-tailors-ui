@@ -1,4 +1,4 @@
-import { SelectItemGroup } from './order/order';
+import { SelectItemGroup, Order } from './order/order';
 
 export function getItemDispVal(itemId: string, groupedItemsWithRate: SelectItemGroup[]) {
 	let result: string = '';
@@ -10,7 +10,7 @@ export function getItemDispVal(itemId: string, groupedItemsWithRate: SelectItemG
 			group.groupItems.forEach(
 				item => {
 					if (item.id === itemId) {
-						result = item.dispVal;
+						result = item.name;
 						return;
 					}
 				}
@@ -61,4 +61,14 @@ export function removeSafariShirt(groupedItemsWithRate: SelectItemGroup[]) {
 			}
 		}
 	)
+}
+
+export function calcOrderTotalUtil(order: Order) {
+	let total = 0;
+	order.itemIds.forEach(
+		(itemId, idx) => {
+			total += order.itemCounts[idx] * order.itemRates[idx];
+		}
+	)
+	return total;
 }

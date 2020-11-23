@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../app/auth/auth.service';
+import { PrintService } from './print/print.service'
 
 @Component({
 	selector: 'app-root',
@@ -8,7 +9,7 @@ import { AuthService } from '../app/auth/auth.service';
 })
 export class AppComponent {
 
-	constructor(public auth: AuthService) {
+	constructor(public auth: AuthService, public printService: PrintService) {
 
 	}
 

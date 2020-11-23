@@ -5,6 +5,13 @@ body {
 	margin: 0.3em;
 }
 
+body app-root div.isNotPrinting {
+	height: 100vh;
+}
+
+body app-root div.isPrinting {
+	height: auto;
+}
 
 mat-toolbar-row.mat-toolbar-row, .container, mat-expansion-panel-header.mat-expansion-panel-header {
 	padding: 0.3em;
@@ -31,13 +38,39 @@ div.mat-form-field-infix {
 	width: 20.35em;
 }
 
+.item-counts, .item-rates {
+	display: inline-flex;
+}
+
+.multiply-count-n-rates, .item-totals {
+	display: inline-grid;
+	margin-right: 0.5em;
+}
+
+.multiply-count-n-rate, .item-total {
+	padding-top: 1.75em;
+	padding-bottom: 2.456em;
+}
+
 .mat-form-field.item-form-field {
-	margin-right: 0;
-	margin-left: 2em;
+	display: block;
+}
+
+.order-total {
+	padding-bottom: 1em;
+	padding-left: 10.8em;
 }
 
 .item-form-field .mat-form-field-infix {
 	width: 7.39em;
+}
+
+.item-rates .item-form-field .mat-form-field-infix {
+	width: 3.5em;
+}
+
+.item-form-field .mat-form-field-prefix {
+	position: static;
 }
 
 .date-form-field .mat-form-field-infix {
@@ -64,4 +97,20 @@ mat-expansion-panel .mat-form-field-infix {
 ngx-spinner img {
 	height: 3em;
 	width: 3em;
+}
+
+@media print {
+	.isPrinting>* {
+		display: none !important;
+	}
+	.isPrinting app-print-layout {
+		display: block !important;
+	}
+	@page {
+		size: A4;
+		margin: 0;
+	}
+	body {
+		margin: 1cm;
+	}
 }

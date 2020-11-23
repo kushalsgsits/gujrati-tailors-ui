@@ -18,10 +18,10 @@ export class ItemService {
 		return this.http.get<any>(api, { params });
 	}
 
-	update(rates): Observable<any> {
+	save(rates): Observable<any> {
 		let params = new HttpParams();
 		const api = environment.apiUrl + 'rates';
-		return this.http.put<any>(api, { rates: rates }, { params });
+		return this.http.post<any>(api, rates, { params });
 	}
 }
 

@@ -10,9 +10,7 @@
 			<h4>{{groupName}}</h4>
 			<div [formArrayName]="groupName">
 				<mat-form-field appearance="outline" *ngFor="let itemControl of getGroupFormArrayControls(groupName).controls; let formCtrlIdx=index">
-					<!-- <mat-label>{{getItemDispValue(groupedItemsWithRate[grpIdx].groupItems[formCtrlIdx].id)}}</mat-label>  -->
-					<mat-label>{{getItemDispValue(groupedItemsWithRate[grpIdx].groupItems[formCtrlIdx].id)}}</mat-label>
-					<start from here>
+					<mat-label>{{getItemDispValue(groupedItemsWithRate[grpIdx].groupItems[formCtrlIdx].id)}}</mat-label> 
 					<input matInput [formControlName]="formCtrlIdx" type="number">
 				</mat-form-field>
 			</div>

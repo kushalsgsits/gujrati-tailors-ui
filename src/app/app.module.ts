@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,13 +31,17 @@ import { RateEditComponent } from './rate/rate-edit/rate-edit.component';
 import { AppHttpInterceptor } from './interceptor/app-http.interceptor';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { InvoiceComponent } from './print/invoice/invoice.component';
+import { PrintLayoutComponent } from './print/print-layout/print-layout.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		DashboardComponent,
 		LoginComponent,
-		RateEditComponent
+		RateEditComponent,
+		InvoiceComponent,
+		PrintLayoutComponent
 	],
 	imports: [
 		BrowserModule,
@@ -63,6 +67,7 @@ import { environment } from '../environments/environment';
 		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
 	],
 	providers: [
+		Title,
 		{ provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true }
 	],
 	bootstrap: [AppComponent]

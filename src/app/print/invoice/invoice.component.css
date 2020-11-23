@@ -1,0 +1,53 @@
+.invoice, .shop, .order, .terms-prop {
+	padding: 0.3em;
+	margin: 0.3em;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 1);
+	border-width: 1px;
+	border-radius: 5px;
+}
+
+.shop, .order, .terms-prop {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.shop-name {
+	font-weight: 900;
+	font-size: xx-large;
+	height: 0.9em;
+}
+
+.order-items {
+	padding-left: 3em;
+}
+
+table, tr {
+	text-align: right;
+	border-collapse: collapse;
+	border-width: 1px;
+	border-style: solid;
+	max-width: 30em;
+	min-width: 25em;
+}
+
+th, td {
+	padding: 0 1em;
+}
+
+tr>td:first-of-type, tr>th:first-of-type {
+	text-align: left;
+}
+
+ul {
+	margin-block-start: 0;
+	padding-inline-start: 1em;
+	margin-block-end: 0;
+	padding-right: 2em;
+	list-style-type: square;
+}
+
+.cutter {
+	border-bottom: 2px dashed;
+	margin: 3em 0;
+}

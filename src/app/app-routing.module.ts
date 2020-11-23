@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { RateEditComponent } from './rate/rate-edit/rate-edit.component';
 import { LoginComponent } from './login/login.component';
+import { PrintLayoutComponent } from './print/print-layout/print-layout.component'
+import { InvoiceComponent } from './print/invoice/invoice.component'
+
 import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -14,6 +17,15 @@ const routes: Routes = [
 		component: RateEditComponent,
 		canActivate: [AuthGuard]
 	},
+	{
+		path: 'print',
+		outlet: 'print',
+		component: PrintLayoutComponent,
+		children: [
+			{ path: 'invoice/:orderId', component: InvoiceComponent }
+		],
+		canActivate: [AuthGuard]
+	}
 ];
 
 

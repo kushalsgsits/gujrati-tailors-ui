@@ -1,6 +1,6 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<div style="height: 100vh;" mat-app-background>
+<div [class.isPrinting]="printService.isPrinting" [class.isNotPrinting]="!printService.isPrinting" mat-app-background>
   <mat-toolbar color="primary">
     <mat-toolbar-row>
       <button mat-icon-button (click)="sidenav.toggle()" fxShow="true" fxHide.gt-sm>
@@ -35,4 +35,7 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
+  
+  <router-outlet name="print"></router-outlet>
+  
 </div> 

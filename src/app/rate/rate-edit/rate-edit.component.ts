@@ -30,19 +30,19 @@ export class RateEditComponent implements OnInit {
 	}
 
 	onSubmit() {
-		this.update();
+		this.save();
 	}
 
 	onCancel() {
 		this.router.navigate(['/orders/new']);
 	}
 
-	private update() {
+	private save() {
 		console.log("RateFormValue", this.rateForm.value)
 		this.spinner.show();
 		const itemIds: string[] = [];
 		const itemRates: number[] = [];
-		const rates = {itemIds: itemIds, itemRates: itemRates};
+		const rates = { itemIds: itemIds, itemRates: itemRates };
 		this.groupedItemsWithRate.forEach(
 			group => {
 				let rates: number[] = this.rateForm.value[group.groupName]
@@ -55,18 +55,7 @@ export class RateEditComponent implements OnInit {
 			}
 		)
 		console.log("Rates to be updates", rates)
-		/*Object.keys(this.rateForm.value).forEach(
-			key => {
-				const a = this.rateForm.value[key]
-				console.log("a", a)
-				a.foreach(
-					item => {
-						rates[item.id] = item.rate;
-					}
-				)
-			}
-		)*/
-		/*this.itemService.update(rates).subscribe(
+		this.itemService.save(rates).subscribe(
 			res => {
 				this.router.navigate(['/orders/new']);
 				this.spinner.hide();
@@ -76,7 +65,7 @@ export class RateEditComponent implements OnInit {
 				this.spinner.hide();
 				alert(errResponse.shortErrorMsg);
 			}
-		);*/
+		);
 	}
 
 	private init() {

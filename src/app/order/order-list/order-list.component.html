@@ -138,7 +138,11 @@
 							<mat-icon color="primary">edit</mat-icon>
 					    	<span>Edit Order</span>
 						</button>
-						<button mat-menu-item (click)="delete(element)">
+						<button mat-menu-item (click)="printInvoice(element)">
+					    	<mat-icon color="primary">print</mat-icon>
+					    	<span>Print Invoice</span>
+					  	</button>
+					  	<button mat-menu-item (click)="delete(element)">
 					    	<mat-icon color="warn">delete</mat-icon>
 					    	<span>Delete Order</span>
 					  	</button>
@@ -166,6 +170,7 @@
 							<div class="element-detail-2">
 								<div><mat-icon mat-list-icon>phone</mat-icon>{{element.mobile}}</div>
 								<div><mat-icon mat-list-icon>date_range</mat-icon>{{element.orderDateMillis | date:'dd-MMM-yyyy'}}</div>
+								<div><span class="rupee-symbol">&#x20B9;</span>{{calcOrderTotal(element)}}</div>
 							</div>
 							<div class="element-detail-3">
 								<div>

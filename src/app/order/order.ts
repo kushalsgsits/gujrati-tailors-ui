@@ -1,5 +1,5 @@
 export class Order {
-	id: number;
+	id: string;
 	orderDate;
 	orderDateMillis: number;
 	deliveryDate;
@@ -12,11 +12,12 @@ export class Order {
 	itemIds: string[];
 	itemCounts: number[];
 	itemRates: number[];
+	advance: number;
 	notes: string;
 }
 
 export interface SelectItem {
-	dispVal: string;
+	name: string;
 	groupId: string;
 	id: string;
 	rate: number;

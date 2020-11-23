@@ -7,8 +7,9 @@ import { MatSelectChange } from '@angular/material/select';
 
 import { OrderService } from '../order.service';
 import { ItemService } from '../../item/item.service';
+import { PrintService } from '../../print/print.service';
 import { Order, SelectItemGroup } from '../order';
-import { getItemDispVal, getItemRate, removeSafariShirt } from './../../utils';
+import { getItemDispVal, getItemRate, removeSafariShirt, calcOrderTotalUtil } from './../../utils';
 
 import { map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -61,7 +62,6 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 
 	groupedItemsWithRate: SelectItemGroup[];
 	orderForm: FormGroup;
-	feedback: any = {};
 	selectedItemsOld: string[];
 	mySubscription: any;
 
@@ -71,7 +71,8 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		private orderService: OrderService,
 		private itemService: ItemService,
 		private fb: FormBuilder,
-		private spinner: NgxSpinnerService) {
+		private spinner: NgxSpinnerService,
+		private printService: PrintService) {
 
 		this.router.routeReuseStrategy.shouldReuseRoute = function() {
 			return false;
@@ -124,7 +125,6 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 							this.groupedItemsWithRate[0].disabled = true;
 							console.log('GroupedItemsWithRate', this.groupedItemsWithRate);
 							this.selectedItemsOld = order.itemIds;
-							this.feedback = {};
 							this.initOrderForm(order);
 							this.spinner.hide();
 						},
@@ -136,7 +136,6 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 				},
 				errResponse => {
 					this.spinner.hide();
-					// this.feedback = { type: 'warning', message: 'Error loading order details. Please check internet connection or contact Kushal' };
 					alert(errResponse.shortErrorMsg);
 				}
 			);
@@ -225,13 +224,13 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 		this.convertDatesToMillis(this.orderForm.value);
 		this.orderService.save(this.orderForm.value).subscribe(
 			order => {
-				// TODO kc reload /orders/new
-				this.router.navigate(['/orders/new']);
+				console.log('Order saved successfully')
+				// this.router.navigate(['/orders/new']);
 				this.spinner.hide();
-				alert('Order save successfully');
+				// alert('Order saved successfully');
+				this.printService.printDocument('invoice', order.id);
 			},
 			errResponse => {
-				// this.feedback = { type: 'warning', message: 'Error saving order' };
 				this.spinner.hide();
 				alert(errResponse.shortErrorMsg);
 			}
@@ -273,5 +272,9 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 
 	getItemDispValue(itemId: string) {
 		return getItemDispVal(itemId, this.groupedItemsWithRate);
+	}
+
+	calcOrderTotal(order: Order) {
+		return calcOrderTotalUtil(order);
 	}
 }
