@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Title } from '@angular/platform-browser';
 import { PrintService } from '../print.service';
 import { OrderService } from '../../order/order.service'
 import { ItemService } from '../../item/item.service'
@@ -17,36 +16,29 @@ export class InvoiceComponent implements OnInit {
 	copies: string[] = ['Customer Copy', 'Shop Copy'];
 	order: Order;
 	groupedItemsWithRate: SelectItemGroup[];
-	mainTitle: string;
 
 	constructor(route: ActivatedRoute,
 		private printService: PrintService,
 		private orderService: OrderService,
-		private itemService: ItemService,
-		private titleService: Title) {
+		private itemService: ItemService) {
 		this.orderId = route.snapshot.params['orderId'];
-		this.mainTitle = this.titleService.getTitle();
 	}
 
 	ngOnInit() {
 		this.orderService.findById(this.orderId).subscribe(
 			order => {
 				this.order = order;
-				this.titleService.setTitle(order.id);
 				this.itemService.getGroupedItemsWithRate({ dateMillis: order.orderDateMillis }).subscribe(
 					groupedItemsWithRate => {
 						this.groupedItemsWithRate = groupedItemsWithRate;
 						this.printService.onDataReady();
-						this.titleService.setTitle(this.mainTitle);
 					},
 					errRes => {
-						this.titleService.setTitle(this.mainTitle);
 						alert(errRes.shortErrorMsg);
 					}
 				);
 			},
 			errRes => {
-				this.titleService.setTitle(this.mainTitle);
 				alert(errRes.shortErrorMsg);
 			})
 	}
