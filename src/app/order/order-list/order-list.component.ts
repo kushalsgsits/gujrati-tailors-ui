@@ -83,6 +83,7 @@ export class OrderListComponent implements OnInit {
 	columnsToDisplay = ['orderNumber', 'name', 'deliveryDate', 'actions'];
 	expandedElement: Order | null;
 	feedback: any = {};
+	isPrinting = false;
 
 	constructor(
 		private orderService: OrderService,
@@ -186,6 +187,15 @@ export class OrderListComponent implements OnInit {
 	printInvoice(order: Order): void {
 		this.printService.printDocument('invoice', order.id);
 	}
+	
+	printOrderList() {
+		this.isPrinting = true;
+		setTimeout(() => {
+			console.log('Printing OrderList');
+			window.print();
+			this.isPrinting = false;
+		});
+	}
 
 	closeFilterPanel() {
 		this.isFilterPanelExpanded = false;
@@ -193,6 +203,10 @@ export class OrderListComponent implements OnInit {
 
 	expandTableRow(order: Order) {
 		this.expandedElement = this.expandedElement === order ? null : order;
+	}
+	
+	isTableRowExpanded(order: Order): boolean {
+		return this.expandedElement === order || this.isPrinting;
 	}
 
 	openOrderStatusDialog(order: Order) {
@@ -263,4 +277,5 @@ export class OrderListComponent implements OnInit {
 	calcOrderTotal(order: Order) {
 		return calcOrderTotalUtil(order);
 	}
+	
 }

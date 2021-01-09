@@ -25,7 +25,7 @@ export class PrintService {
 
 	onDataReady() {
 		setTimeout(() => {
-			console.log('Printing invoice for order: ' + this.titleService.getTitle());
+			console.log('Printing: ' + this.titleService.getTitle());
 			window.print();
 			this.isPrinting = false;
 			this.titleService.setTitle(this.mainTitle);

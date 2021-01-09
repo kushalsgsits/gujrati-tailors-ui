@@ -109,7 +109,12 @@
 			</div>		
 		</div>
 	
-		<h3>Orders List</h3>
+		<h3>
+			Orders List
+			<button mat-icon-button color="primary" (click)="printOrderList()">
+				<mat-icon>print</mat-icon>
+			</button>
+		</h3>
 		<table mat-table [dataSource]="orderList" multiTemplateDataRows class="mat-elevation-z8">
 
 			<ng-container matColumnDef="orderNumber">
@@ -153,7 +158,7 @@
 			<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
 			<ng-container matColumnDef="expandedDetail">
 				<td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-					<div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+					<div class="example-element-detail" [@detailExpand]="isTableRowExpanded(element) ? 'expanded' : 'collapsed'">
 						<div class="element-detail-1">
 							<div>
 								<table class="item-table">
@@ -186,7 +191,7 @@
 
 			<tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
 			<tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row" 
-					[class.example-expanded-row]="expandedElement === element">
+					[class.example-expanded-row]="isTableRowExpanded(element)">
 			</tr>
 			<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 		</table>

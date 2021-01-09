@@ -4,6 +4,7 @@ import { RateEditComponent } from './rate/rate-edit/rate-edit.component';
 import { LoginComponent } from './login/login.component';
 import { PrintLayoutComponent } from './print/print-layout/print-layout.component'
 import { InvoiceComponent } from './print/invoice/invoice.component'
+import { OrderListComponent } from './order/order-list/order-list.component'
 
 import { AuthGuard } from './auth/auth.guard';
 
