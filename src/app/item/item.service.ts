@@ -1,5 +1,4 @@
 import { environment } from '../../environments/environment';
-import { ItemFilter } from './item-filter';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -10,12 +9,9 @@ export class ItemService {
 	constructor(private http: HttpClient) {
 	}
 
-	getGroupedItemsWithRate(filter: ItemFilter): Observable<any> {
-		const params = {
-			'dateMillis': filter.dateMillis
-		};
-		const api = environment.apiUrl + 'grouped-items';
-		return this.http.get<any>(api, { params });
+	getGroupedItemsWithRate(): Observable<any> {
+		const api = environment.apiUrl + 'items/groupedItems';
+		return this.http.get<any>(api);
 	}
 
 	save(rates): Observable<any> {

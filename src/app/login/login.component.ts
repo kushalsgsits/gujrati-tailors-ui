@@ -3,8 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../models/User'
-import { JwtToken } from '../models/JwtToken'
+import { AuthenticationRequest } from '../models/AuthenticationRequest'
+import { AuthenticationResponse } from '../models/AuthenticationResponse'
 import { environment } from '../../environments/environment';
 import { NgxSpinnerService } from "ngx-spinner";
 
@@ -16,7 +16,7 @@ import { NgxSpinnerService } from "ngx-spinner";
 export class LoginComponent implements OnInit {
 
 	form: FormGroup;
-	api = environment.apiUrl + 'login';
+	api = environment.apiUrl + 'authenticate';
 
 	constructor(private auth: AuthService,
 		private http: HttpClient,
@@ -30,17 +30,17 @@ export class LoginComponent implements OnInit {
 		}
 
 		this.form = new FormGroup({
-			uname: new FormControl('', Validators.required),
-			pwd: new FormControl('', Validators.required),
+			username: new FormControl('', Validators.required),
+			password: new FormControl('', Validators.required),
 		});
 	}
 
-	onSubmit(formValues: User) {
+	onSubmit(authPayload: AuthenticationRequest) {
 		this.spinner.show();
 		let url = `${this.api}`;
-		this.http.post<JwtToken>(url, formValues).subscribe(
-			jwtToken => {
-				this.auth.setToken(jwtToken.token);
+		this.http.post<AuthenticationResponse>(url, authPayload).subscribe(
+			authResponse => {
+				this.auth.setToken(authResponse.jwtToken);
 				this.router.navigate(['/orders/new']);
 				this.spinner.hide();
 			},

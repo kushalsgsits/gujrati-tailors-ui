@@ -5,7 +5,7 @@ import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
 import { ItemService } from '../../item/item.service';
 import { PrintService } from '../../print/print.service';
-import { Order, itemCategories, orderStatuses, SelectItemGroup, SelectItem } from '../order';
+import { Order, itemTypes, orderStatuses, SelectItemGroup, SelectItem } from '../order';
 import { calcOrderTotalUtil } from './../../utils';
 import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -66,7 +66,7 @@ export const MY_FORMATS = {
 export class OrderListComponent implements OnInit {
 
 	// constants
-	itemCategoriesArray: string[] = itemCategories;
+	itemTypesArray: string[] = itemTypes;
 	itemIdToItemMap: any;
 	orderStatusesArray: string[] = orderStatuses;
 
@@ -97,17 +97,16 @@ export class OrderListComponent implements OnInit {
 
 	ngOnInit() {
 		this.spinner.show();
-		// Pass dateMillis=0 to get latest rates
-		this.itemService.getGroupedItemsWithRate({ dateMillis: 0 }).subscribe(
+		this.itemService.getGroupedItemsWithRate().subscribe(
 			groupedItemsWithRate => {
-				this.initItemIdToItemCatoriesMap(groupedItemsWithRate);
+				this.initItemIdToItemMap(groupedItemsWithRate);
 				this.initFilterForm();
 				this.search();
 				this.spinner.hide();
 			},
 			errRes => {
 				this.spinner.hide();
-				alert(errRes.shortErrorMsg);
+				alert(errRes.errorMessage);
 			}
 		);
 	}
@@ -119,7 +118,7 @@ export class OrderListComponent implements OnInit {
 	private createBlankFilterFormGroup() {
 		const formGroup = this.fb.group({
 			orderStatus: [''],
-			itemCategory: [''],
+			itemType: [''],
 			deliveryStartDate: [''],
 			deliveryEndDate: [''],
 			orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
@@ -151,10 +150,9 @@ export class OrderListComponent implements OnInit {
 
 	search(): void {
 		this.spinner.show();
-		this.convertDatesToMillis(this.filterForm.value);
 		this.orderService.load(this.filterForm.value).subscribe(
 			result => {
-				this.orderList = result;
+				this.orderList = result._embedded.orders;
 				this.createSummary();
 				this.spinner.hide();
 			},
@@ -162,7 +160,7 @@ export class OrderListComponent implements OnInit {
 				this.orderList = [];
 				this.ordersSummary = {};
 				this.spinner.hide();
-				alert(errResponse.shortErrorMsg);
+				alert(errResponse.errorMessage);
 			}
 		);
 	}
@@ -174,20 +172,21 @@ export class OrderListComponent implements OnInit {
 					this.search();
 				},
 				errResponse => {
-					alert(errResponse.shortErrorMsg);
+					alert(errResponse.errorMessage);
 				}
 			);
 		}
 	}
 
 	edit(order: Order): void {
-		this.router.navigate(['/orders', order.id]);
+		let id  = this.extractOrderId(order)
+		this.router.navigate(['/orders', id]);
 	}
 
 	printInvoice(order: Order): void {
-		this.printService.printDocument('invoice', order.id);
+		this.printService.printDocument('invoice', order._links.self.href);
 	}
-	
+
 	printOrderList() {
 		this.isPrinting = true;
 		setTimeout(() => {
@@ -204,7 +203,7 @@ export class OrderListComponent implements OnInit {
 	expandTableRow(order: Order) {
 		this.expandedElement = this.expandedElement === order ? null : order;
 	}
-	
+
 	isTableRowExpanded(order: Order): boolean {
 		return this.expandedElement === order || this.isPrinting;
 	}
@@ -215,11 +214,6 @@ export class OrderListComponent implements OnInit {
 		});
 	}
 
-	private convertDatesToMillis(orderFilter: OrderFilter) {
-		orderFilter.deliveryStartDateMillis = orderFilter.deliveryStartDate ? Number(orderFilter.deliveryStartDate.valueOf()) : 0;
-		orderFilter.deliveryEndDateMillis = orderFilter.deliveryEndDate ? Number(orderFilter.deliveryEndDate.valueOf()) : 0;
-	}
-
 	private createSummary() {
 		this.ordersSummary = {};
 		if (!(this.orderList && this.orderList.length > 0)) {
@@ -227,18 +221,18 @@ export class OrderListComponent implements OnInit {
 		}
 		this.orderList.forEach(
 			order => {
-				order.itemIds.forEach(
-					(itemId, index) => {
-						let itemCount = order.itemCounts[index];
-						let item: SelectItem = this.itemIdToItemMap[itemId];
+				order.orderItems.forEach(
+					orderItem => {
+						let itemCount = orderItem.quantity;
+						let item: SelectItem = this.itemIdToItemMap[orderItem.id];
 						if (item.type === 'Combo') {
 							item.comboItemIds.forEach(
 								comboItemId => {
-									let itemCat = this.itemIdToItemMap[comboItemId].type;
-									if (this.ordersSummary[itemCat]) {
-										this.ordersSummary[itemCat] += itemCount;
+									let itemType = this.itemIdToItemMap[comboItemId].type;
+									if (this.ordersSummary[itemType]) {
+										this.ordersSummary[itemType] += itemCount;
 									} else {
-										this.ordersSummary[itemCat] = itemCount;
+										this.ordersSummary[itemType] = itemCount;
 									}
 								}
 							)
@@ -255,7 +249,7 @@ export class OrderListComponent implements OnInit {
 		);
 	}
 
-	private initItemIdToItemCatoriesMap(groupedItemsWithRate: SelectItemGroup[]) {
+	private initItemIdToItemMap(groupedItemsWithRate: SelectItemGroup[]) {
 		this.itemIdToItemMap = {};
 		groupedItemsWithRate.forEach(
 			group => {
@@ -277,5 +271,12 @@ export class OrderListComponent implements OnInit {
 	calcOrderTotal(order: Order) {
 		return calcOrderTotalUtil(order);
 	}
-	
+
+	private extractOrderId(order: Order) : string {
+		let selfUrl : string = order._links.self.href;
+		let orderId = selfUrl.substring(selfUrl.lastIndexOf('/') + 1);
+		console.log("orderId", orderId);
+		return orderId;
+	}
+
 }

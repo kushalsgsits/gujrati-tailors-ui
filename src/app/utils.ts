@@ -1,36 +1,16 @@
-import { SelectItemGroup, Order } from './order/order';
+import { SelectItem, SelectItemGroup, Order } from './order/order';
 
-export function getItemDispVal(itemId: string, groupedItemsWithRate: SelectItemGroup[]) {
-	let result: string = '';
+export function getSelectItem(itemId: string, groupedItemsWithRate: SelectItemGroup[]) : SelectItem {
+	let result: SelectItem = null;
 	groupedItemsWithRate.forEach(
 		group => {
-			if (result !== '') {
+			if (result !== null) {
 				return;
 			}
 			group.groupItems.forEach(
 				item => {
 					if (item.id === itemId) {
-						result = item.name;
-						return;
-					}
-				}
-			)
-		}
-	)
-	return result;
-}
-
-export function getItemRate(itemId: string, groupedItemsWithRate: SelectItemGroup[]) {
-	let result: number = -1;
-	groupedItemsWithRate.forEach(
-		group => {
-			if (result !== -1) {
-				return;
-			}
-			group.groupItems.forEach(
-				item => {
-					if (item.id === itemId) {
-						result = item.rate;
+						result = item;
 						return;
 					}
 				}
@@ -47,12 +27,10 @@ export function removeSafariShirt(groupedItemsWithRate: SelectItemGroup[]) {
 			if (indexFound !== - 1) {
 				return;
 			}
-			console.log('group.groupItems=' + group.groupItems);
 			group.groupItems.forEach(
 				(item, index) => {
 					if (item.id === 'safariShirt') {
 						indexFound = index;
-						console.log('indexFount=' + indexFound);
 					}
 				}
 			)
@@ -65,9 +43,9 @@ export function removeSafariShirt(groupedItemsWithRate: SelectItemGroup[]) {
 
 export function calcOrderTotalUtil(order: Order) {
 	let total = 0;
-	order.itemIds.forEach(
-		(itemId, idx) => {
-			total += order.itemCounts[idx] * order.itemRates[idx];
+	order.orderItems.forEach(
+		orderItem => {
+			total += orderItem.quantity * orderItem.rate;
 		}
 	)
 	return total;

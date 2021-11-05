@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tailor-poc.appspot.com/webapi/'
+  apiUrl: 'https://gujrati-tailors-backend.el.r.appspot.com/'
 };

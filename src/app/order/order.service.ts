@@ -17,11 +17,11 @@ export class OrderService {
 		return this.http.get<Order>(url);
 	}
 
-	load(filter: OrderFilter): Observable<Order[]> {
+	load(filter: OrderFilter): Observable<any> {
 		return this.find(filter);
 	}
 
-	find(filter: OrderFilter): Observable<Order[]> {
+	find(filter: OrderFilter): Observable<any> {
 		const params = {
 			'orderStatus': `${filter.orderStatus}`,
 			'itemCategory': `${filter.itemCategory}`,
@@ -31,24 +31,22 @@ export class OrderService {
 			'mobile': filter.mobile,
 			'name': filter.name
 		};
-		return this.http.get<Order[]>(this.api, { params });
+		return this.http.get<any>(this.api, { params });
 	}
 
 	save(order: Order): Observable<Order> {
-		let params = new HttpParams();
 		let url = '';
-		if (order.id) {
-			url = `${this.api}/${order.id.toString()}`;
-			params = new HttpParams().set('ID', order.id.toString());
-			return this.http.put<Order>(url, order, { params });
+		if (order._links) {
+			url = `${order._links.self.href}`;
+			return this.http.put<Order>(url, order);
 		} else {
 			url = `${this.api}`;
-			return this.http.post<Order>(url, order, { params });
+			return this.http.post<Order>(url, order);
 		}
 	}
 
-	delete(entity: Order): Observable<Order> {
-		let url = `${this.api}/${entity.id.toString()}`;
+	delete(order: Order): Observable<Order> {
+		let url = `${order._links.self.href}`;
 		return this.http.delete<Order>(url);
 	}
 }

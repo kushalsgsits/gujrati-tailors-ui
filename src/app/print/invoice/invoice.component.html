@@ -12,22 +12,22 @@
 		<div class="order">
 			<div class="order-header">
 				<div class="customer-name">
-					<b>Name</b>: {{order.name}}
+					<b>Name</b>: {{order.customer.name}}
 				</div>
 				<div class="customer-mobile">
-					<b>Mobile</b>: {{order.mobile}}
+					<b>Mobile</b>: {{order.customer.mobile}}
 				</div>
 				<div class="order-date">
-					<b>Order Date</b>: {{order.orderDateMillis | date:'dd-MMM-yyyy'}}
+					<b>Order Date</b>: {{order.orderDate | date:'dd-MMM-yyyy'}}
 				</div>
 				<div class="delivery-date">
-					<b>Del. Date</b>: {{order.deliveryDateMillis | date:'dd-MMM-yyyy'}}
+					<b>Del. Date</b>: {{order.deliveryDate | date:'dd-MMM-yyyy'}}
 				</div>
 				<div class="order-no">
 					<b>Order no.</b>: {{order.orderNumber}}
 				</div>
 				<div class="order-id">
-					<b>Invoice no.</b>: {{order.id}}
+					<b>Invoice no.</b>: TBD
 				</div>
 			</div>
 			<div class="order-items">
@@ -38,11 +38,11 @@
 						<th>Rate</th>
 						<th>Amt.</th>
 					</tr>
-					<tr *ngFor="let item of order.itemIds; let i=index">
-						<td>{{getItemDispValue(order.itemIds[i])}}</td>
-						<td>{{order.itemCounts[i]}}</td>
-						<td>{{order.itemRates[i]}}</td>
-						<td>{{order.itemCounts[i] * order.itemRates[i]}}</td>
+					<tr *ngFor="let item of order.orderItems; let i=index">
+						<td>{{getItemDispValue(item.id)}}</td>
+						<td>{{item.quantity}}</td>
+						<td>{{item.rate}}</td>
+						<td>{{item.quantity * item.rate}}</td>
 					</tr>
 					<tr>
 						<td></td>

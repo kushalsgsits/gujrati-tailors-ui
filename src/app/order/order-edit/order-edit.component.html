@@ -3,31 +3,31 @@
 		<h3 *ngIf="!isEditing">Create Order</h3>
 		<h3 *ngIf="isEditing">Update Order</h3>
 	</header>
-	
+
 	<ngx-spinner template="<img src='/assets/icons/spinner.gif' />"></ngx-spinner>
-	
+
 	<form [formGroup]="orderForm" (ngSubmit)="onSubmit()">
 		<div>
 			<mat-form-field appearance="outline">
 				<mat-label>Order Type</mat-label>
-    			<mat-select formControlName="orderType" (selectionChange)="onOrderTypeChange($event)" [disabled]="isEditing">
-	      			<mat-option value="Coat">Coat</mat-option>
-	      			<mat-option value="Regular">Regular</mat-option>
+    			<mat-select [formControl]="orderForm.get('orderType')" (selectionChange)="onOrderTypeChange($event)">
+	      			<mat-option value="COAT">Coat</mat-option>
+	      			<mat-option value="REGULAR">Regular</mat-option>
 				</mat-select>
 			</mat-form-field>
 			<mat-form-field appearance="outline">
 				<mat-label>Order Number</mat-label>
-				<input matInput formControlName="orderNumber" type="number" [disabled]="isEditing" [readonly]="isEditing">
+				<input matInput [formControl]="orderForm.get('orderNumber')" type="number">
 			</mat-form-field>
 		</div>
 		<div>
-			<mat-form-field appearance="outline" class="date-form-field"> 
+			<mat-form-field appearance="outline" class="date-form-field">
 				<mat-label>Order Date</mat-label>
-				<input matInput formControlName="orderDate" [matDatepicker]="orderDatepicker" [readonly]="isEditing">
+				<input matInput formControlName="orderDate" [matDatepicker]="orderDatepicker">
 				<mat-datepicker-toggle matSuffix [for]="orderDatepicker" [disabled]="isEditing"></mat-datepicker-toggle>
 			    <mat-datepicker #orderDatepicker></mat-datepicker>
 			</mat-form-field>
-			<mat-form-field appearance="outline" class="date-form-field"> 
+			<mat-form-field appearance="outline" class="date-form-field">
 				<mat-label>Delivery Date</mat-label>
 				<input matInput [min]="orderForm.value.orderDate" formControlName="deliveryDate" [matDatepicker]="deliveryDatepicker">
 				<mat-datepicker-toggle matSuffix [for]="deliveryDatepicker"></mat-datepicker-toggle>
@@ -35,14 +35,16 @@
 			</mat-form-field>
 		</div>
 		<div>
-			<mat-form-field appearance="outline">
-				<mat-label>Name</mat-label>
-				<input matInput formControlName="name">
-			</mat-form-field>
-			<mat-form-field appearance="outline">
-				<mat-label>Mobile</mat-label>
-				<input matInput formControlName="mobile" type="number">
-			</mat-form-field>
+			<ng-container [formGroup]="orderForm.get('customer')">
+				<mat-form-field appearance="outline">
+					<mat-label>Name</mat-label>
+					<input matInput formControlName="name">
+				</mat-form-field>
+				<mat-form-field appearance="outline">
+					<mat-label>Mobile</mat-label>
+					<input matInput formControlName="mobile" type="number">
+				</mat-form-field>
+			</ng-container>
 		</div>
 		<div>
 			<mat-form-field appearance="outline" class="items-form-field">
@@ -54,31 +56,30 @@
 				</mat-select>
 			</mat-form-field>
 		</div>
-		<div>
-			<div class="item-counts">
-				<div formArrayName="itemCounts">
-					<mat-form-field appearance="outline" class="item-form-field" *ngFor="let item of itemCounts.controls; let i=index">
-						<mat-label>{{getItemDispValue(orderForm.value.itemIds[i])}} Qty</mat-label> 
-						<input matInput [formControlName]="i" type="number">
-					</mat-form-field>
-				</div>
-			</div>
-			<div class="multiply-count-n-rates">
-				<div class="item-total" *ngFor="let itemId of orderForm.value.itemIds; let i=index">x</div>
-			</div>
-			<div class="item-rates">
-				<div formArrayName="itemRates">
-					<mat-form-field appearance="outline" class="item-form-field" *ngFor="let item of itemRates.controls; let i=index">
-						<mat-label>{{getItemDispValue(orderForm.value.itemRates[i])}} Rate</mat-label> 
-						<input matInput [formControlName]="i" type="number">
-						<span matPrefix>&#x20B9;&nbsp;</span>
-					</mat-form-field>
-				</div>
-			</div>
-			<div class="item-totals">
-				<div class="item-total" *ngFor="let itemId of orderForm.value.itemIds; let i=index">
-					<div>=&nbsp;&#x20B9;&nbsp;{{orderForm.value.itemCounts[i]*orderForm.value.itemRates[i]}}</div>
-				</div>
+		<div formArrayName="orderItems">
+			<!-- https://netbasal.com/angular-reactive-forms-the-ultimate-guide-to-formarray-3adbe6b0b61a -->
+			<div *ngFor="let item of orderItems.controls">
+				<ng-container [formGroup]="item">
+					<div class="item-counts">
+						<mat-form-field appearance="outline" class="item-form-field">
+							<mat-label>{{getItemDispValue(item.value.id)}} Qty</mat-label>
+							<input matInput formControlName="quantity" type="number">
+						</mat-form-field>
+					</div>
+					<div class="multiply-count-n-rates">
+						<div class="item-total">x</div>
+					</div>
+					<div class="item-rates">
+						<mat-form-field appearance="outline" class="item-form-field">
+							<mat-label>{{getItemDispValue(item.value.id)}} Rate</mat-label>
+							<input matInput formControlName="rate" type="number">
+							<span matPrefix>&#x20B9;&nbsp;</span>
+						</mat-form-field>
+					</div>
+					<div class="item-totals">
+						=&nbsp;&#x20B9;&nbsp;{{item.value.quantity * item.value.rate}}
+					</div>
+				</ng-container>
 			</div>
 		</div>
 		<div class="order-total">
@@ -91,8 +92,8 @@
     			<mat-hint align="end">{{notesInput.value?.length || 0}}/300</mat-hint>
   			</mat-form-field>
 		</div>
-		<!-- <div>{{orderForm.valid}}</div>
-		<div>{{orderForm.value | json}}</div> -->
+		<!--<div>{{orderForm.valid}}</div>
+		<div>{{orderForm.getRawValue() | json}}</div>-->
 		<div>
 			<button *ngIf="!isEditing" mat-raised-button color="primary" type="submit" class="button" [disabled]="!orderForm.valid">Create Order</button>
 			<button *ngIf="isEditing" mat-raised-button color="primary" type="submit" class="button" [disabled]="!orderForm.valid">Update Order</button>

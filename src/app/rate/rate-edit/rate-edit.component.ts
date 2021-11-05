@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { getItemDispVal, removeSafariShirt } from './../../utils';
+import { getSelectItem, removeSafariShirt } from './../../utils';
 import { SelectItemGroup, SelectItem } from '../../order/order';
 import { ItemService } from '../../item/item.service';
 
@@ -70,7 +70,7 @@ export class RateEditComponent implements OnInit {
 
 	private init() {
 		this.spinner.show();
-		this.itemService.getGroupedItemsWithRate({ dateMillis: 0 }).subscribe(
+		this.itemService.getGroupedItemsWithRate().subscribe(
 			groupedItemsWithRate => {
 				this.groupedItemsWithRate = groupedItemsWithRate;
 				// Remove Safari shrt from items list as it is not to be shown in UI
@@ -105,8 +105,8 @@ export class RateEditComponent implements OnInit {
 		removeSafariShirt(this.groupedItemsWithRate);
 	}
 
-	getItemDispValue(itemId: string) {
-		return getItemDispVal(itemId, this.groupedItemsWithRate);
+	getItemDispValue(itemId: string) : string {
+		return getSelectItem(itemId, this.groupedItemsWithRate).name;
 	}
 
 	get groupFormArrayNames(): string[] {

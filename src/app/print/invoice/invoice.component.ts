@@ -4,7 +4,7 @@ import { PrintService } from '../print.service';
 import { OrderService } from '../../order/order.service'
 import { ItemService } from '../../item/item.service'
 import { Order, SelectItemGroup } from '../../order/order';
-import { getItemDispVal, calcOrderTotalUtil } from './../../utils';
+import { getSelectItem, calcOrderTotalUtil } from './../../utils';
 
 @Component({
 	selector: 'app-invoice',
@@ -28,7 +28,7 @@ export class InvoiceComponent implements OnInit {
 		this.orderService.findById(this.orderId).subscribe(
 			order => {
 				this.order = order;
-				this.itemService.getGroupedItemsWithRate({ dateMillis: order.orderDateMillis }).subscribe(
+				this.itemService.getGroupedItemsWithRate().subscribe(
 					groupedItemsWithRate => {
 						this.groupedItemsWithRate = groupedItemsWithRate;
 						this.printService.onDataReady();
@@ -43,8 +43,8 @@ export class InvoiceComponent implements OnInit {
 			})
 	}
 
-	getItemDispValue(itemId: string) {
-		return getItemDispVal(itemId, this.groupedItemsWithRate);
+	getItemDispValue(itemId: string) : string {
+		return getSelectItem(itemId, this.groupedItemsWithRate).name;
 	}
 
 	calcOrderTotal() {

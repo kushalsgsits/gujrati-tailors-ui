@@ -42,6 +42,10 @@ div.mat-form-field-infix {
 	display: inline-flex;
 }
 
+.item-rates .item-form-field .mat-form-field-infix, .item-counts .item-form-field .mat-form-field-infix {
+	width: 5.8em;
+}
+
 .multiply-count-n-rates, .item-totals {
 	display: inline-grid;
 	margin-right: 0.5em;
@@ -58,15 +62,11 @@ div.mat-form-field-infix {
 
 .order-total {
 	padding-bottom: 1em;
-	padding-left: 10.8em;
+	padding-left: 11.5em;
 }
 
 .item-form-field .mat-form-field-infix {
 	width: 7.39em;
-}
-
-.item-rates .item-form-field .mat-form-field-infix {
-	width: 3.5em;
 }
 
 .item-form-field .mat-form-field-prefix {
