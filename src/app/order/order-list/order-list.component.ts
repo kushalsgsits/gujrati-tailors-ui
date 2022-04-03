@@ -5,7 +5,7 @@ import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
 import { ItemService } from '../../item/item.service';
 import { PrintService } from '../../print/print.service';
-import { Order, itemTypes, orderStatuses, SelectItemGroup, SelectItem } from '../order';
+import {Order, itemTypes, orderStatuses, SelectItemGroup, SelectItem, orderTypes} from '../order';
 import { calcOrderTotalUtil } from './../../utils';
 import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -69,6 +69,7 @@ export class OrderListComponent implements OnInit {
 	itemTypesArray: string[] = itemTypes;
 	itemIdToItemMap: any;
 	orderStatusesArray: string[] = orderStatuses;
+  orderTypesArray: string[] = orderTypes;
 
 	// results
 	orderList: Order[] = [];
@@ -117,13 +118,12 @@ export class OrderListComponent implements OnInit {
 
 	private createBlankFilterFormGroup() {
 		const formGroup = this.fb.group({
-			orderStatus: [''],
-			itemType: [''],
-			deliveryStartDate: [''],
-			deliveryEndDate: [''],
-			orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
-			mobile: ['', Validators.pattern('[\\d]{10}$')],
-			name: ['']
+      deliveryDateStart: [''/*, Validators.required*/],
+      deliveryDateEnd: [''/*, Validators.required*/],
+      orderType: [''],
+      orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
+      orderStatus: [''],
+			mobile: ['', Validators.pattern('[\\d]{10}$')]
 		});
 		return formGroup;
 	}
@@ -150,9 +150,13 @@ export class OrderListComponent implements OnInit {
 
 	search(): void {
 		this.spinner.show();
+		console.log("filterForm", this.filterForm)
 		this.orderService.load(this.filterForm.value).subscribe(
 			result => {
-				this.orderList = result._embedded.orders;
+				this.orderList = [];
+				if (result._embedded && result._embedded.orders) {
+          this.orderList = result._embedded.orders
+        }
 				this.createSummary();
 				this.spinner.hide();
 			},

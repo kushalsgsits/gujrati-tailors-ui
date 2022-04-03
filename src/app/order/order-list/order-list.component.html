@@ -1,5 +1,5 @@
 <div class="container">
-	
+
 	<mat-expansion-panel class="headers-align" hideToggle [(expanded)]="isFilterPanelExpanded">
 		<mat-expansion-panel-header collapsedHeight="2.4em" expandedHeight="2.4em">
 	    	<mat-panel-title>
@@ -18,70 +18,72 @@
 	    		</span>
 	    	</mat-panel-description>
 	    </mat-expansion-panel-header>
-	    
+
 		<form [formGroup]="filterForm" (ngSubmit)="onSubmit()" class="filter-form">
 		    <mat-tab-group mat-stretch-tabs (selectedTabChange)="onTabChanged($event);">
 				<mat-tab>
 					<ng-template mat-tab-label>
 				      <mat-icon>equalizer</mat-icon>
 				      Analysis Filters
-				    </ng-template>
-					<div>
-						<mat-form-field appearance="outline">
-							<mat-label>Order Status</mat-label>
-			    			<mat-select formControlName="orderStatus" multiple>
-				      			<mat-option *ngFor="let orderStatus of orderStatusesArray" [value]="orderStatus" >{{orderStatus}}</mat-option>
-							</mat-select>
-						</mat-form-field>
-						<mat-form-field appearance="outline">
-							<mat-label>Item Category</mat-label>
-			    			<mat-select formControlName="itemType" multiple>
-				      			<mat-option *ngFor="let itemType of itemTypesArray" [value]="itemType" >{{itemType}}</mat-option>
-							</mat-select>
-						</mat-form-field>
-					</div>
-					<div>
-						<mat-form-field appearance="outline" class="date-form-field"> 
+          </ng-template>
+          <div>
+            <mat-form-field appearance="outline" class="date-form-field">
 							<mat-label>Delivery From</mat-label>
-							<input matInput formControlName="deliveryStartDate" [matDatepicker]="from">
+							<input matInput formControlName="deliveryDateStart" [matDatepicker]="from">
 							<mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
 						    <mat-datepicker #from></mat-datepicker>
 						</mat-form-field>
-						<mat-form-field appearance="outline" class="date-form-field"> 
+						<mat-form-field appearance="outline" class="date-form-field">
 							<mat-label>Delivery To</mat-label>
-							<input matInput [min]="filterForm.value.deliveryStartDate" formControlName="deliveryEndDate" [matDatepicker]="to">
+							<input matInput [min]="filterForm.value.deliveryDateStart" formControlName="deliveryDateEnd" [matDatepicker]="to">
 							<mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
 						    <mat-datepicker #to></mat-datepicker>
-						</mat-form-field>			
+						</mat-form-field>
 					</div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Order Type</mat-label>
+              <mat-select formControlName="orderType">
+                <mat-option *ngFor="let orderType of orderTypesArray" [value]="orderType" >{{orderType}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Order Status</mat-label>
+              <mat-select formControlName="orderStatus">
+                <mat-option *ngFor="let orderStatus of orderStatusesArray" [value]="orderStatus" >{{orderStatus}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 				</mat-tab>
 				<mat-tab>
 					<ng-template mat-tab-label>
 				      <mat-icon>search</mat-icon>
 				      Search Filters
-				    </ng-template>
+          </ng-template>
 					<div>
 						<mat-form-field appearance="outline">
-							<mat-label>Order Status</mat-label>
-			    			<mat-select formControlName="orderStatus" multiple>
-				      			<mat-option *ngFor="let orderStatus of orderStatusesArray" [value]="orderStatus" >{{orderStatus}}</mat-option>
-							</mat-select>
-						</mat-form-field>
-						<mat-form-field appearance="outline">
-							<mat-label>Order No.</mat-label> 
+							<mat-label>Order No.</mat-label>
 							<input matInput formControlName="orderNumber">
 						</mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Mobile</mat-label>
+              <input matInput formControlName="mobile">
+            </mat-form-field>
 					</div>
 					<div>
-						<mat-form-field appearance="outline">
-							<mat-label>Mobile</mat-label>
-							<input matInput formControlName="mobile">
-						</mat-form-field>
-						<mat-form-field appearance="outline">
-							<mat-label>Name</mat-label>
-							<input matInput formControlName="name">
-						</mat-form-field>
-					</div>
+            <mat-form-field appearance="outline">
+              <mat-label>Order Type</mat-label>
+              <mat-select formControlName="orderType">
+                <mat-option *ngFor="let orderType of orderTypesArray" [value]="orderType" >{{orderType}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Order Status</mat-label>
+              <mat-select formControlName="orderStatus">
+                <mat-option *ngFor="let orderStatus of orderStatusesArray" [value]="orderStatus" >{{orderStatus}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 				</mat-tab>
 			</mat-tab-group>
 			<div>
@@ -93,11 +95,11 @@
 			</div>
 		</form>
 	</mat-expansion-panel>
-	
+
 	<ngx-spinner template="<img src='/assets/icons/spinner.gif' />"></ngx-spinner>
-	
+
 	<div *ngIf="orderList.length > 0">
-	
+
 		<h3>Orders Summary</h3>
 		<div class="mat-elevation-z8 orders-summary">
 			<div *ngFor="let itemType of itemTypesArray">
@@ -106,9 +108,9 @@
 					<mat-divider></mat-divider>
 					<div class="item-category-count">{{ordersSummary[itemType]}}</div>
 				</div>
-			</div>		
+			</div>
 		</div>
-	
+
 		<h3>
 			Orders List
 			<!-- <button mat-icon-button color="primary" (click)="printOrderList()">
@@ -119,19 +121,19 @@
 
 			<ng-container matColumnDef="orderNumber">
 				<th mat-header-cell *matHeaderCellDef>Order No.</th>
-				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.orderType | slice:0:1 }}-{{element.orderNumber}}</td>					
+				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.orderType | slice:0:1 }}-{{element.orderNumber}}</td>
 			</ng-container>
-			
+
 			<ng-container matColumnDef="name">
 				<th mat-header-cell *matHeaderCellDef>Name</th>
-				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.customer.name}}</td>					
+				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.customer.name}}</td>
 			</ng-container>
-			
+
 			<ng-container matColumnDef="deliveryDate">
 				<th mat-header-cell *matHeaderCellDef>Del. Date</th>
-				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.deliveryDate | date:'dd-MMM-yyyy'}}</td>					
+				<td mat-cell *matCellDef="let element" (click)="expandTableRow(element)">{{element.deliveryDate | date:'dd-MMM-yyyy'}}</td>
 			</ng-container>
-			
+
 			<ng-container matColumnDef="actions">
 				<th mat-header-cell *matHeaderCellDef></th>
 				<td mat-cell *matCellDef="let element">
@@ -190,13 +192,13 @@
 			</ng-container>
 
 			<tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
-			<tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row" 
+			<tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
 					[class.example-expanded-row]="isTableRowExpanded(element)">
 			</tr>
 			<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 		</table>
 	</div>
-	
+
 	<div *ngIf="orderList.length === 0">
 		<h3>No order available as per applied filter(s)</h3>
 	</div>
