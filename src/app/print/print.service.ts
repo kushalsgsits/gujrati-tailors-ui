@@ -9,14 +9,14 @@ export class PrintService {
 	isPrinting = false;
 	mainTitle: string;
 
-	constructor(private router: Router, private titleService: Title) { 
+	constructor(private router: Router, private titleService: Title) {
 		this.mainTitle = this.titleService.getTitle();
 	}
 
 	printDocument(documentName: string, documentData: string) {
 		console.log(documentName, documentData);
 		this.isPrinting = true;
-		this.titleService.setTitle(documentData);
+		this.titleService.setTitle(documentName);
 		this.router.navigate(['/',
 			{
 				outlets: { 'print': ['print', documentName, documentData] }

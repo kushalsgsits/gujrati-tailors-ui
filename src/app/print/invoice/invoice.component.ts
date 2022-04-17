@@ -21,7 +21,9 @@ export class InvoiceComponent implements OnInit {
 		private printService: PrintService,
 		private orderService: OrderService,
 		private itemService: ItemService) {
-		this.orderId = route.snapshot.params['orderId'];
+		let selfUrl = route.snapshot.params['orderId'];
+    this.orderId = selfUrl.substring(selfUrl.lastIndexOf('/') + 1);
+    console.log('orderId from selfUrl in InvoiceComponent', this.orderId);
 	}
 
 	ngOnInit() {

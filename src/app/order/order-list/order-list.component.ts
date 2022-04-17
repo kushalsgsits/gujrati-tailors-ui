@@ -118,8 +118,8 @@ export class OrderListComponent implements OnInit {
 
 	private createBlankFilterFormGroup() {
 		const formGroup = this.fb.group({
-      deliveryDateStart: [''/*, Validators.required*/],
-      deliveryDateEnd: [''/*, Validators.required*/],
+      deliveryDateStart: [''],
+      deliveryDateEnd: [''],
       orderType: [''],
       orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
       orderStatus: [''],
