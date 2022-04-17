@@ -7,14 +7,13 @@
 			</mat-panel-title>
 	    	<mat-panel-description>
 	    		<span>
-	    			<span *ngIf="!((filterForm.value.orderStatus && filterForm.value.orderStatus.length > 0) || isFilterPanelExpanded || filterForm.value.name || (filterForm.value.itemType && filterForm.value.itemType.length > 0) || filterForm.value.orderNumber || filterForm.value.deliveryStartDate || filterForm.value.deliveryEndDate || filterForm.value.mobile)">Tap to add filters</span>
-	    			<span *ngIf="filterForm.value.orderStatus && filterForm.value.orderStatus.length > 0"><mat-icon>check_circle_outline</mat-icon>{{filterForm.value.orderStatus}}  </span>
-		    		<span *ngIf="filterForm.value.itemType && filterForm.value.itemType.length > 0"><mat-icon>category</mat-icon>{{filterForm.value.itemType}}  </span>
+	    			<span *ngIf="!(isFilterPanelExpanded || filterForm.value.deliveryDateStart || filterForm.value.deliveryDateEnd || filterForm.value.orderType || filterForm.value.orderStatus || filterForm.value.orderNumber || filterForm.value.mobile)">Tap to add filters</span>
+		    		<span *ngIf="filterForm.value.deliveryDateStart"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryDateStart | date:'dd-MMM-yyyy'}}  </span>
+		    		<span *ngIf="filterForm.value.deliveryDateEnd"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryDateEnd | date:'dd-MMM-yyyy'}}  </span>
 		    		<span *ngIf="filterForm.value.orderNumber"><mat-icon>label_important</mat-icon>{{filterForm.value.orderNumber}}  </span>
-		    		<span *ngIf="filterForm.value.deliveryStartDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryStartDate | date:'dd-MMM-yyyy'}}  </span>
-		    		<span *ngIf="filterForm.value.deliveryEndDate"><mat-icon>date_range</mat-icon>{{filterForm.value.deliveryEndDate | date:'dd-MMM-yyyy'}}  </span>
 		    		<span *ngIf="filterForm.value.mobile"><mat-icon>phone</mat-icon>{{filterForm.value.mobile}}  </span>
-		    		<span *ngIf="filterForm.value.name"><mat-icon>person_circle</mat-icon>{{filterForm.value.name}}</span>
+            <span *ngIf="filterForm.value.orderType"><mat-icon>category</mat-icon>{{filterForm.value.orderType}}  </span>
+	    			<span *ngIf="filterForm.value.orderStatus && filterForm.value.orderStatus.length > 0"><mat-icon>check_circle_outline</mat-icon>{{filterForm.value.orderStatus}}  </span>
 	    		</span>
 	    	</mat-panel-description>
 	    </mat-expansion-panel-header>
