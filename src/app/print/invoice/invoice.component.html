@@ -11,6 +11,9 @@
 		</div>
 		<div class="order">
 			<div class="order-header">
+        <div class="order-no">
+          <b>Order No.</b>: {{order.orderType | slice:0:1 }}-{{order.orderNumber}}
+        </div>
 				<div class="customer-name">
 					<b>Name</b>: {{order.customer.name}}
 				</div>
@@ -22,12 +25,6 @@
 				</div>
 				<div class="delivery-date">
 					<b>Del. Date</b>: {{order.deliveryDate | date:'dd-MMM-yyyy'}}
-				</div>
-				<div class="order-no">
-					<b>Order no.</b>: {{order.orderNumber}}
-				</div>
-				<div class="order-id">
-					<b>Invoice no.</b>: TBD
 				</div>
 			</div>
 			<div class="order-items">
@@ -44,12 +41,12 @@
 						<td>{{item.rate}}</td>
 						<td>{{item.quantity * item.rate}}</td>
 					</tr>
-					<tr>
+					<!--<tr>
 						<td></td>
 						<td></td>
 						<td><b>Advance</b></td>
 						<td>{{order.advance}}</td>
-					</tr>
+					</tr>-->
 					<tr>
 						<td></td>
 						<td></td>
@@ -66,9 +63,10 @@
 		<div class="terms-prop">
 			<div class="terms">
 				<ul>
-					<li>No guarantee of clothes after 15 days of delivery date</li>
-					<li>Errors and omissions excepted</li>
-					<li>Clothes will not be provided without receipt</li>
+          <li>No delivery without receipt</li>
+          <li>No guarantee on delivery after 15 days of delivery date</li>
+          <li>No warranty on fitting after 15 days of delivery date</li>
+          <li>Errors and omissions excepted</li>
 					<li>All disputes subject to Satna jurisdiction</li>
 				</ul>
 			</div>

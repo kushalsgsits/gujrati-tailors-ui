@@ -97,6 +97,7 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 	}
 
 	private initOrder() {
+	  // TODO fix spinner in inOnInit
 		this.spinner.show();
 		this.route.params
 			.pipe(
@@ -131,12 +132,14 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 						errRes => {
 							this.spinner.hide();
 							alert(errRes.errorMessage);
+							// TODO handle error in getGroupedItemsWithRate
 						}
 					);
 				},
 				errResponse => {
 					this.spinner.hide();
 					alert(errResponse.errorMessage);
+          this.router.navigate(['/orders/new']);
 				}
 			);
 	}
@@ -230,9 +233,10 @@ export class OrderEditComponent implements OnInit, OnDestroy {
 			order => {
 				console.log('Order saved successfully', order);
 				alert('Order saved successfully');
-				this.router.navigate(['/orders/new']);
-				this.spinner.hide();
-				// this.printService.printDocument('invoice', order.id);
+        this.spinner.hide();
+        this.router.navigate(['/orders/new']).then(value => {
+          this.printService.printDocument('invoice', order._links.self.href);
+        })
 			},
 			errResponse => {
 				this.spinner.hide();

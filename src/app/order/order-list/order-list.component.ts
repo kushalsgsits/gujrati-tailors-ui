@@ -97,16 +97,14 @@ export class OrderListComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.spinner.show();
+    // TODO fix spinner in inOnInit
 		this.itemService.getGroupedItemsWithRate().subscribe(
 			groupedItemsWithRate => {
 				this.initItemIdToItemMap(groupedItemsWithRate);
 				this.initFilterForm();
 				this.search();
-				this.spinner.hide();
 			},
 			errRes => {
-				this.spinner.hide();
 				alert(errRes.errorMessage);
 			}
 		);
