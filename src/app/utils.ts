@@ -50,3 +50,10 @@ export function calcOrderTotalUtil(order: Order) {
 	)
 	return total;
 }
+
+export function extractOrderId(order: Order) : string {
+  let selfUrl : string = order._links.self.href;
+  let orderId = selfUrl.substring(selfUrl.lastIndexOf('/') + 1);
+  console.log("Extracted orderId from an order", orderId);
+  return orderId;
+}

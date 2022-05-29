@@ -4,6 +4,7 @@ import {OrderFilter} from './order-filter';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import {extractOrderId} from "../utils";
 
 @Injectable()
 export class OrderService {
@@ -37,7 +38,9 @@ export class OrderService {
 	save(order: Order): Observable<Order> {
 		let url = '';
 		if (order._links) {
-			url = `${order._links.self.href}`;
+		  // TODO directly use order._links.self.href as URL for PUT
+      // Currently, we cannot use because of issue in GCP:https://issuetracker.google.com/u/0/issues/168085785
+			url = this.api + '/' +  extractOrderId(order);
 			return this.http.put<Order>(url, order);
 		} else {
 			url = `${this.api}`;
@@ -46,7 +49,9 @@ export class OrderService {
 	}
 
 	delete(order: Order): Observable<Order> {
-		let url = `${order._links.self.href}`;
+    // TODO directly use order._links.self.href as URL for PUT
+    // Currently, we cannot use because of issue in GCP:https://issuetracker.google.com/u/0/issues/168085785
+    let url = this.api + '/' + extractOrderId(order);
 		return this.http.delete<Order>(url);
 	}
 }
