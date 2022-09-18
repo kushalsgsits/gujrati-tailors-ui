@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router'
-import { OrderFilter } from '../order-filter';
 import { OrderService } from '../order.service';
 import { ItemService } from '../../item/item.service';
 import { PrintService } from '../../print/print.service';
 import {Order, itemTypes, orderStatuses, SelectItemGroup, SelectItem, orderTypes} from '../order';
-import { calcOrderTotalUtil } from './../../utils';
+import { calcOrderTotalUtil } from '../../utils';
 import { OrderStatusEditDialogComponent } from '../order-status-edit-dialog/order-status-edit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -21,7 +20,8 @@ import { NgxSpinnerService } from "ngx-spinner";
 // the `default as` syntax.
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
-import { default as _rollupMoment } from 'moment';
+import {default as _rollupMoment} from 'moment';
+import {MatTabChangeEvent} from "@angular/material/tabs";
 
 const moment = _rollupMoment || _moment;
 
@@ -76,8 +76,8 @@ export class OrderListComponent implements OnInit {
 	ordersSummary: any = {};
 
 	// request related
-	filter = new OrderFilter();
 	filterForm: FormGroup;
+  currentTab = 0;
 
 	// display related
 	isFilterPanelExpanded: boolean = false;
@@ -111,24 +111,42 @@ export class OrderListComponent implements OnInit {
 	}
 
 	initFilterForm() {
-		this.filterForm = this.createBlankFilterFormGroup();
+    this.filterForm = this.currentTab == 0 ? this.createFormGroupForTab0() : this.createFormGroupForTab1();
 	}
 
-	private createBlankFilterFormGroup() {
-		const formGroup = this.fb.group({
-      deliveryDateStart: [''],
-      deliveryDateEnd: [''],
+  private createFormGroupForTab0() {
+    const formGroup = this.fb.group({
+      deliveryDateStart: [moment().subtract(1, "d")],
+      deliveryDateEnd: [moment().add(9, "d")],
       orderType: [''],
       orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
       orderStatus: [''],
-			mobile: ['', Validators.pattern('[\\d]{10}$')]
-		});
-		return formGroup;
-	}
+      mobile: ['', Validators.pattern('[\\d]{10}$')],
+      sort: ["deliveryDate,ASC"],
+      size: ['100']
+    });
+    console.log("Called createFormGroup-Tab#0", this.filterForm);
+    return formGroup;
+  }
 
-	onClear() {
+  private createFormGroupForTab1() {
+    const formGroup = this.fb.group({
+      deliveryDateStart: [moment().subtract(1, "y")],
+      deliveryDateEnd: [moment().add(2, "month")],
+      orderType: [''],
+      orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
+      orderStatus: [''],
+      mobile: ['', Validators.pattern('[\\d]{10}$')],
+      sort: ["deliveryDate,DESC"],
+      size: ['5']
+    });
+    console.log("Called createFormGroup-Tab#1", this.filterForm);
+    return formGroup;
+  }
+
+	onReset() {
 		this.feedback = {};
-		this.filterForm = this.createBlankFilterFormGroup();
+    this.initFilterForm();
 	}
 
 	onSubmit() {
@@ -137,9 +155,10 @@ export class OrderListComponent implements OnInit {
 		this.search();
 	}
 
-	onTabChanged(event) {
-		this.filterForm = this.createBlankFilterFormGroup();
-	}
+  onTabChanged(event: MatTabChangeEvent) {
+    this.currentTab = event.index;
+    this.initFilterForm();
+  }
 
 	onCancel() {
 		this.feedback = {};

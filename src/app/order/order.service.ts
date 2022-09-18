@@ -30,7 +30,8 @@ export class OrderService {
       'orderNumber': filter.orderNumber,
       'orderStatus': `${filter.orderStatus}`,
       'mobile': filter.mobile,
-      'size': '100'
+      'size': filter.size,
+      'sort': filter.sort
     };
     let url = this.api + '/customSearch';
 		return this.http.get<any>(url, { params });
