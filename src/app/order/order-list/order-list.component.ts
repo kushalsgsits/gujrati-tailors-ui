@@ -116,14 +116,14 @@ export class OrderListComponent implements OnInit {
 
   private createFormGroupForTab0() {
     const formGroup = this.fb.group({
-      deliveryDateStart: [moment().subtract(1, "d")],
-      deliveryDateEnd: [moment().add(9, "d")],
+      deliveryDateStart: [moment().set('h', 0).set('m', 0).set('s', 0).set('ms', 0)],
+      deliveryDateEnd: [moment().add(1, "M").set('h', 0).set('m', 0).set('s', 0).set('ms', 0)],
       orderType: [''],
       orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
       orderStatus: [''],
       mobile: ['', Validators.pattern('[\\d]{10}$')],
       sort: ["deliveryDate,ASC"],
-      size: ['100']
+      size: ['200']
     });
     console.log("Called createFormGroup-Tab#0", this.filterForm);
     return formGroup;
@@ -131,8 +131,8 @@ export class OrderListComponent implements OnInit {
 
   private createFormGroupForTab1() {
     const formGroup = this.fb.group({
-      deliveryDateStart: [moment().subtract(1, "y")],
-      deliveryDateEnd: [moment().add(2, "month")],
+      deliveryDateStart: [moment().subtract(1, "y").set('h', 0).set('m', 0).set('s', 0).set('ms', 0)],
+      deliveryDateEnd: [moment().add(2, "M").set('h', 0).set('m', 0).set('s', 0).set('ms', 0)],
       orderType: [''],
       orderNumber: ['', Validators.pattern('[\\d]{1,4}')],
       orderStatus: [''],
