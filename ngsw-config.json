@@ -25,5 +25,19 @@
 				]
 			}
 		}
-	]
+	],
+  "dataGroups": [
+    {
+      "name": "GroupedItemsWithRate",
+      "urls": [
+        "**/groupedItems"
+      ],
+      "cacheConfig": {
+        "maxAge": "1d",
+        "strategy": "freshness",
+        "timeout": "0u",
+        "maxSize": 1
+      }
+    }
+  ]
 }
