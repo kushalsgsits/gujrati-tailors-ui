@@ -240,8 +240,10 @@ export class OrderListComponent implements OnInit {
 		if (!(this.orderList && this.orderList.length > 0)) {
 			return;
 		}
+    let orderAmount = 0;
 		this.orderList.forEach(
 			order => {
+        orderAmount += this.calcOrderTotal(order);
 				order.orderItems.forEach(
 					orderItem => {
 						let itemCount = orderItem.quantity;
@@ -268,6 +270,7 @@ export class OrderListComponent implements OnInit {
 				);
 			}
 		);
+    this.ordersSummary['orderAmount'] = orderAmount;
 	}
 
 	private initItemIdToItemMap(groupedItemsWithRate: SelectItemGroup[]) {

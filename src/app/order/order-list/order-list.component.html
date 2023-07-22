@@ -108,6 +108,13 @@
 					<div class="item-category-count">{{ordersSummary[itemType]}}</div>
 				</div>
 			</div>
+      <div>
+        <div class="item-category" *ngIf="ordersSummary['orderAmount']">
+          <div class="item-category-name">Amount</div>
+          <mat-divider></mat-divider>
+          <div class="item-category-count">{{ordersSummary['orderAmount']}}</div>
+        </div>
+      </div>
 		</div>
 
 		<h3>
