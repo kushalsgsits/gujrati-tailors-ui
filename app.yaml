@@ -1,0 +1,7 @@
+runtime: python39
+handlers:
+- url: /
+  static_files: gujrati-tailors-ui/index.html
+  upload: gujrati-tailors-ui/index.html
+- url: /
+  static_dir: gujrati-tailors-ui
