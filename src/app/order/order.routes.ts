@@ -13,9 +13,5 @@ export const ORDER_ROUTES: Routes = [
 		path: 'orders/:id',
 		component: OrderEditComponent,
 		canActivate: [AuthGuard]
-	},
-	{
-		path: '**',
-		redirectTo: 'orders/new',
 	}
 ];

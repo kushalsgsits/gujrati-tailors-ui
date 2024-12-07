@@ -121,6 +121,9 @@
           }
         }
       }
-    }},
-  "defaultProject": "gujrati-tailors-ui"
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
 }

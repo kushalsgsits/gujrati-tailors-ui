@@ -38,7 +38,7 @@ div.mat-form-field-infix {
 	width: 20.35em;
 }
 
-.item-counts, .item-rates {
+.item-counts, .item-rates, .item-remove {
 	display: inline-flex;
 }
 

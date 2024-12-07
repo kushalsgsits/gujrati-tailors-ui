@@ -1,4 +1,5 @@
 import { SelectItem, SelectItemGroup, Order } from './order/order';
+import {StudioBill} from './studio/studio-bill';
 
 export function getSelectItem(itemId: string, groupedItemsWithRate: SelectItemGroup[]) : SelectItem {
 	let result: SelectItem = null;
@@ -49,6 +50,16 @@ export function calcOrderTotalUtil(order: Order) {
 		}
 	)
 	return total;
+}
+
+export function calcBillTotalUtil(bill: StudioBill) {
+  let total = 0;
+  bill.billItems.forEach(
+    billItem => {
+      total += billItem.quantity * billItem.rate;
+    }
+  );
+  return total;
 }
 
 export function extractOrderId(order: Order) : string {

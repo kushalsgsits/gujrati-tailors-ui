@@ -9,9 +9,10 @@
       <span>Gujrati Tailors </span>
       <div fxShow="true" fxHide.lt-md="true">
         <!-- The following menu items will be hidden on both SM and XS screen sizes -->
-        <!-- <a color="secondary" mat-button routerLink="/dashboard">Dashboard</a> -->
         <a mat-button routerLink="/orders/new">Create Order</a>
         <a mat-button routerLink="/orders">Orders List</a>
+        <a mat-button routerLink="/studio/bills/new">Create Bill</a>
+        <a mat-button routerLink="/studio/bills">Bills List</a>
         <!-- <a mat-button routerLink="/rates">Rate Card</a> -->
       </div>
       <!-- This fills the remaining space of the current row to push logout icon to the right -->
@@ -25,9 +26,10 @@
   <mat-sidenav-container fxFlexFill>
     <mat-sidenav #sidenav>
       <mat-nav-list>
-        <!-- <a color="secondary" mat-list-item (click)="sidenav.toggle()" routerLink="/dashboard">Dashboard</a> -->
         <a mat-list-item (click)="sidenav.toggle()" routerLink="/orders/new">Create Order</a>
         <a mat-list-item (click)="sidenav.toggle()" routerLink="/orders">Orders List</a>
+        <a mat-list-item (click)="sidenav.toggle()" routerLink="/studio/bills/new">Create Bill</a>
+        <a mat-list-item (click)="sidenav.toggle()" routerLink="/studio/bills">Bills List</a>
         <!-- <a mat-list-item (click)="sidenav.toggle()" routerLink="/rates">Rate Card</a> -->
       </mat-nav-list>
     </mat-sidenav>
@@ -35,7 +37,7 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
-  
+
   <router-outlet name="print"></router-outlet>
-  
-</div> 
+
+</div>
