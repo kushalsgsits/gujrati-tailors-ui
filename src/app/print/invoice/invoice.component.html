@@ -1,11 +1,13 @@
-<div *ngFor="let copyName of copies; let idx=index;">
+<div *ngFor="let copyName of copies; let idx=index;" xmlns="http://www.w3.org/1999/html">
 	<div class="invoice">
 		<div class="shop">
 			<div class="shop-details">
-				<div class="shop-name">Gujrati Tailors</div>
-				<div class="address-timings-mobile">
-					<b>Add.</b>: Chandani Talkies Building, Satna - 485001 | <b>Time</b>:
-					11 AM to 8:30 PM | <b>Mob.</b>: 9617886605
+				<div class="shop-name">Gujrati Tailors - A Bespoke Studio</div>
+				<div class="address">
+          <b>Address</b>: Dr. B. L. Yadav Building, Near Axis Bank, Rewa Road, Satna - 485001
+        </div>
+        <div class="timings-mobile">
+          <b>Timings</b>: 11 AM to 8:30 PM | <b>Mobile</b>: 9617886605
 				</div>
 			</div>
 		</div>
@@ -51,7 +53,7 @@
 						<td></td>
 						<td></td>
 						<td><b>Total</b></td>
-						<td>&#x20B9;&nbsp;{{calcOrderTotal()}}</td>
+            <td><b>&#x20B9;&nbsp;{{calcOrderTotal()}}</b></td>
 					</tr>
 					<tr *ngIf="order.notes">
 						<td colspan="3"><b>Notes: </b>{{order.notes}}</td>
