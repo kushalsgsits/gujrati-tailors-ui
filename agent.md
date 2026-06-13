@@ -22,7 +22,30 @@ npm run start:prod-be  # ng serve -> http://localhost:4200 (backend at GAE prod 
 npm run build:prod     # AOT prod build -> dist/gujrati-tailors-ui (enables service worker)
 ```
 
-Deploy: build prod, then `gcloud app deploy` using `app.yaml` (static file handlers).
+## Deploy to Google App Engine
+
+Static SPA hosted on GAE (Python runtime shell; files served from `gujrati-tailors-ui/`).
+
+| Item | Value |
+|------|--------|
+| GCP project | `gujratitailors` |
+| Prod URL | https://gujratitailors.appspot.com |
+| Config | `app.yaml` (repo root) |
+| API target | `environment.prod.ts` → `https://gujrati-tailors-backend.el.r.appspot.com/` |
+
+Legacy `gs://gujrati-tailors-ui-bucket/` is unused by this flow (left as-is in GCP).
+
+```bash
+# Prepare deploy bundle only (build + copy dist → gujrati-tailors-ui/)
+npm run prepare:deploy
+
+# Build, stage, deploy to GAE
+npm run deploy
+```
+
+`deploy.sh`: `npm run build:prod` → copy `dist/gujrati-tailors-ui` to `gujrati-tailors-ui/` → `gcloud app deploy app.yaml --project=gujratitailors`.
+
+`app.yaml` references `gujrati-tailors-ui/` (staged build output), not `dist/` directly. That folder is gitignored.
 
 ## Backend integration
 

@@ -1,0 +1,20 @@
+# Exclude from gcloud app deploy upload (see: gcloud topic gcloudignore)
+.git
+.gitignore
+.idea
+.vscode
+node_modules
+src
+dist
+e2e
+coverage
+*.md
+deploy.sh
+patch-webpack-md4.js
+angular.json
+tsconfig*.json
+karma.conf.js
+tslint.json
+browserslist
+package.json
+package-lock.json
