@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# node_modules/.bin/node is v13 (from the "node" npm package); use system Node for build/deploy
+export PATH="$(echo "$PATH" | tr ':' '\n' | grep -v 'node_modules/.bin' | paste -sd: - -)"
+
 PROJECT_ID="${GAE_PROJECT_ID:-gujratitailors}"
 APP_YAML="app.yaml"
 STAGING_DIR="gujrati-tailors-ui"
