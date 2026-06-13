@@ -73,6 +73,27 @@ div.mat-form-field-infix {
 	position: static;
 }
 
+/* Update Rates: responsive grid; 11.5em fits longest labels (Achkan/Sherwani, Indo Western Set) */
+.rate-edit-form .rate-fields-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 11.5em);
+	gap: 0.5em;
+	margin-bottom: 0.75em;
+}
+
+.rate-edit-form .rate-fields-grid .item-rates {
+	display: block;
+	width: 11.5em;
+}
+
+.rate-edit-form .rate-fields-grid .item-form-field {
+	width: 11.5em;
+}
+
+.rate-edit-form .rate-fields-grid .item-rates .item-form-field .mat-form-field-infix {
+	width: 8.5em;
+}
+
 .date-form-field .mat-form-field-infix {
 	width: 6.7em;
 }

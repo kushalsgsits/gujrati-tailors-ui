@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { getSelectItem, removeSafariShirt } from './../../utils';
+import { removeSafariShirt } from './../../utils';
 import { SelectItemGroup, SelectItem } from '../../order/order';
 import { ItemService } from '../../item/item.service';
 
@@ -10,8 +11,7 @@ import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
 	selector: 'app-rate-edit',
-	templateUrl: './rate-edit.component.html',
-	styleUrls: ['./rate-edit.component.css']
+	templateUrl: './rate-edit.component.html'
 })
 export class RateEditComponent implements OnInit {
 
@@ -22,11 +22,12 @@ export class RateEditComponent implements OnInit {
 		private itemService: ItemService,
 		private spinner: NgxSpinnerService,
 		private fb: FormBuilder,
+		private snackBar: MatSnackBar,
 		private router: Router) {
 	}
 
 	ngOnInit(): void {
-		this.init();
+		this.loadRates();
 	}
 
 	onSubmit() {
@@ -38,49 +39,62 @@ export class RateEditComponent implements OnInit {
 	}
 
 	private save() {
-		console.log("RateFormValue", this.rateForm.value)
 		this.spinner.show();
-		const itemIds: string[] = [];
-		const itemRates: number[] = [];
-		const rates = { itemIds: itemIds, itemRates: itemRates };
-		this.groupedItemsWithRate.forEach(
-			group => {
-				let rates: number[] = this.rateForm.value[group.groupName]
-				group.groupItems.forEach(
-					(item, idx) => {
-						itemIds.push(item.id);
-						itemRates.push(rates[idx]);
-					}
-				)
-			}
-		)
-		console.log("Rates to be updates", rates)
+		const rates = this.buildRatesPayload();
 		this.itemService.save(rates).subscribe(
-			res => {
-				this.router.navigate(['/orders/new']);
-				this.spinner.hide();
-				alert('Rates updated successfully');
+			() => {
+				// Re-fetch so the (single-entry, freshness) service-worker cache for
+				// groupedItems is refreshed with the new rates instead of serving stale ones.
+				this.refreshRatesAfterSave();
 			},
 			errResponse => {
 				this.spinner.hide();
-				alert(errResponse.shortErrorMsg);
+				this.snackBar.open(errResponse.errorMessage || 'Failed to update rates', 'Dismiss', { duration: 5000 });
 			}
 		);
 	}
 
-	private init() {
+	private buildRatesPayload(): { rates: { [itemId: string]: number } } {
+		const rates: { [itemId: string]: number } = {};
+		this.groupedItemsWithRate.forEach(group => {
+			const items = this.rateForm.get(group.groupName) as FormArray;
+			items.getRawValue().forEach((row: { id: string, rate: number }) => {
+				rates[row.id] = row.rate;
+			});
+		});
+		return { rates };
+	}
+
+	private refreshRatesAfterSave() {
+		this.itemService.getGroupedItemsWithRate().subscribe(
+			groupedItemsWithRate => {
+				this.groupedItemsWithRate = groupedItemsWithRate;
+				this.removeSafariShirtFromItems();
+				this.initRateForm();
+				this.spinner.hide();
+				this.snackBar.open('Rates updated successfully', 'OK', { duration: 3000 });
+			},
+			errRes => {
+				this.spinner.hide();
+				// The save succeeded; only the refresh failed.
+				this.snackBar.open('Rates updated. Refresh failed: ' + (errRes.errorMessage || ''), 'OK', { duration: 4000 });
+			}
+		);
+	}
+
+	private loadRates() {
 		this.spinner.show();
 		this.itemService.getGroupedItemsWithRate().subscribe(
 			groupedItemsWithRate => {
 				this.groupedItemsWithRate = groupedItemsWithRate;
-				// Remove Safari shrt from items list as it is not to be shown in UI
+				// Safari shirt is hidden across the app; it is not editable here.
 				this.removeSafariShirtFromItems();
 				this.initRateForm();
 				this.spinner.hide();
 			},
 			errRes => {
 				this.spinner.hide();
-				alert(errRes.shortErrorMsg);
+				this.snackBar.open(errRes.errorMessage || 'Failed to load rates', 'Dismiss', { duration: 5000 });
 			}
 		);
 	}
@@ -88,25 +102,23 @@ export class RateEditComponent implements OnInit {
 	private initRateForm() {
 		this.rateForm = this.fb.group({});
 		this.groupedItemsWithRate.forEach(
-			group => this.rateForm.addControl(group.groupName, this.fb.array(this.createFormArrayFromGroupedItems(group.groupItems)))
-		)
+			group => this.rateForm.addControl(
+				group.groupName,
+				this.fb.array(group.groupItems.map(item => this.createItemRateFormGroup(item)))
+			)
+		);
 	}
 
-	private createFormArrayFromGroupedItems(items: SelectItem[]): FormControl[] {
-		const arr: FormControl[] = [];
-		if (null == items || items.length == 0) {
-			return arr;
-		}
-		items.forEach(item => arr.push(this.fb.control(item.rate, [Validators.required, Validators.pattern('[\\d]{1,4}')])));
-		return arr;
+	private createItemRateFormGroup(item: SelectItem): FormGroup {
+		return this.fb.group({
+			id: [item.id],
+			name: [{ value: item.name, disabled: true }],
+			rate: [item.rate, [Validators.required, Validators.pattern('[\\d]{1,4}')]]
+		});
 	}
 
 	private removeSafariShirtFromItems() {
 		removeSafariShirt(this.groupedItemsWithRate);
-	}
-
-	getItemDispValue(itemId: string) : string {
-		return getSelectItem(itemId, this.groupedItemsWithRate).name;
 	}
 
 	get groupFormArrayNames(): string[] {
