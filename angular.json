@@ -29,6 +29,14 @@
             "scripts": []
           },
           "configurations": {
+            "local-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local-prod.ts"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -67,6 +75,9 @@
             "browserTarget": "gujrati-tailors-ui:build"
           },
           "configurations": {
+            "local-prod": {
+              "browserTarget": "gujrati-tailors-ui:build:local-prod"
+            },
             "production": {
               "browserTarget": "gujrati-tailors-ui:build:production"
             }

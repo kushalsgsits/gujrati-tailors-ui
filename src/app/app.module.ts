@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import 'hammerjs';
 import { NgxSpinnerModule } from "ngx-spinner";
@@ -62,6 +63,7 @@ import { PrintLayoutComponent } from './print/print-layout/print-layout.componen
 		MatInputModule,
 		MatRadioModule,
 		MatSelectModule,
+		MatSnackBarModule,
 		NgxSpinnerModule,
 		OrderModule,
 		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })

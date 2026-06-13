@@ -2,6 +2,7 @@
 
 # compiled output
 /dist
+/gujrati-tailors-ui
 /tmp
 /out-tsc
 # Only exists if Bazel was run
@@ -45,3 +46,6 @@ testem.log
 .DS_Store
 Thumbs.db
 /gujrati-tailors-ui.iml
+
+# Angular Language Service cache
+.angulardoc.json
