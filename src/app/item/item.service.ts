@@ -9,8 +9,11 @@ export class ItemService {
 	constructor(private http: HttpClient) {
 	}
 
-	getGroupedItemsWithRate(): Observable<any> {
+	getGroupedItemsWithRate(bypassServiceWorker = false): Observable<any> {
 		const api = environment.apiUrl + 'items/groupedItems';
+		if (bypassServiceWorker) {
+			return this.http.get<any>(api, { headers: { 'ngsw-bypass': 'true' } });
+		}
 		return this.http.get<any>(api);
 	}
 

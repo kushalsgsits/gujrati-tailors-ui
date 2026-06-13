@@ -66,7 +66,8 @@ export class RateEditComponent implements OnInit {
 	}
 
 	private refreshRatesAfterSave() {
-		this.itemService.getGroupedItemsWithRate().subscribe(
+		// Bypass SW cache — freshness timeout 0s otherwise returns pre-save groupedItems.
+		this.itemService.getGroupedItemsWithRate(true).subscribe(
 			groupedItemsWithRate => {
 				this.groupedItemsWithRate = groupedItemsWithRate;
 				this.removeSafariShirtFromItems();
